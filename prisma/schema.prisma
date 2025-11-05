@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Group {
-  id                String   @id @default(uuid())
+  id                Int      @id @default(autoincrement())
   name              String
   description       String
   photoUrl          String?
@@ -26,7 +26,7 @@ model Group {
   badges            String[] @default([])
 
   owner        Participant   @relation("GroupOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId      String
+  ownerId      Int
   participants Participant[] @relation("GroupParticipants")
   records      Record[]
 
@@ -35,17 +35,19 @@ model Group {
 }
 
 model Participant {
-  id       String @id @default(uuid())
-  nickname String @unique
-  pasword  String
+  id       Int    @id @default(autoincrement())
+  nickname String
+  password String
 
   group       Group    @relation("GroupParticipants", fields: [groupId], references: [id], onDelete: Cascade)
-  groupId     String
+  groupId     Int
   ownedGroups Group[]  @relation("GroupOwner")
   records     Record[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([groupId, nickname], name: "unique_nickname_per_group")
 }
 
 model Record {
@@ -57,16 +59,16 @@ model Record {
   photos       String[]     @default([])
 
   group    Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId  String
+  groupId  Int
   author   Participant @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId String
+  authorId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 enum ExerciseType {
-  달리기
-  자전거
-  수영
+  run
+  bike
+  swim
 }
