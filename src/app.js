@@ -1,3 +1,5 @@
+// src/app.js (수정된 내용)
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -6,6 +8,9 @@ import { fileURLToPath } from "url";
 import { errorHandler, notFoundHandler } from "./middlewares/error-handler.js";
 import healthRoutes from "./routes/health-routes.js";
 import { debugLog } from "./utils/debug.js";
+
+// --- 추가된 라우터 파일 import ---
+import rankingRoutes from "./routes/ranking-routes.js"; // 1. 랭킹 라우터 import
 
 // ES 모듈에서 __dirname 사용하기
 const __filename = fileURLToPath(import.meta.url);
@@ -33,7 +38,11 @@ app.use("/health", healthRoutes);
 // ============================================
 // TODO: 개발하신 라우터들을 이곳에서 구현 및 적용하시면 됩니다.
 // ============================================
-// app.use('/groups', groupRoutes); //예시임
+
+// 2. 랭킹 API 경로 등록 (prefix를 '/api/ranking'으로 설정하여 명세에 맞춤)
+app.use("/api/ranking", rankingRoutes); //
+
+// app.use('/api/groups', groupRoutes); // 예시: 그룹 라우터도 추가할 위치
 
 // 404 핸들러
 app.use(notFoundHandler);
