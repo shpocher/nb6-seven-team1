@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { errorHandler, notFoundHandler } from "./middlewares/error-handler.js";
 import healthRoutes from "./routes/health-routes.js";
+import { groupLikeCount } from "./routes/group-like-count-routes.js";
 import { debugLog } from "./utils/debug.js";
 
 // ES 모듈에서 __dirname 사용하기
@@ -33,7 +34,7 @@ app.use("/health", healthRoutes);
 // ============================================
 // TODO: 개발하신 라우터들을 이곳에서 구현 및 적용하시면 됩니다.
 // ============================================
-// app.use('/groups', groupRoutes); //예시임
+app.use("/groups", groupLikeCount);
 
 // 404 핸들러
 app.use(notFoundHandler);
