@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 // MIME 타입 검사 (jpg만 허용)
 function fileFilter(_req, file, cb) {
   if (file.mimetype !== 'image/jpeg') {
-    return cb(new Error('jpg 파일만 업로드 가능합니다.'));
+    return cb(new Error('File should be an image file'));
   }
   cb(null, true);
 }
@@ -29,16 +29,9 @@ function fileFilter(_req, file, cb) {
 // 파일 크기 제한 (5MB)
 const limits = { fileSize: 5 * 1024 * 1024 };
 
-// 단일 업로드(group)
-export const uploadSingle = multer({
-  storage,
-  fileFilter,
-  limits,
-}).single('image');
-
-// 다중 업로드(record)
+// 단일 + 다중 포함
 export const uploadMulti = multer({
   storage,
   fileFilter,
   limits,
-}).array('images', 3);
+}).array('images', 10);
