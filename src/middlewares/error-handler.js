@@ -76,6 +76,7 @@ export class UnauthorizedError extends AppError {
   constructor(message = "비밀번호가 일치하지 않습니다") {
     // 상태 코드 401
     super(message, 401);
+    this.path = path;
   }
 }
 
@@ -92,6 +93,7 @@ export class ValidationError extends AppError {
   constructor(message = "입력 데이터가 올바르지 않습니다") {
     // 상태 코드 400 (Bad Request)
     super(message, 400);
+    this.path = path;
   }
 }
 
