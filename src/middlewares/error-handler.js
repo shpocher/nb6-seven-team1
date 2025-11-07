@@ -179,15 +179,27 @@ export const errorHandler = (err, req, res, next) => {
     // 에러 클래스 이름 변환
     // NotFoundError → NOTFOUND
     // UnauthorizedError → UNAUTHORIZED
+    // ValidationError → VALIDATION
     // 마지막의 "Error" 텍스트를 제거하고 대문자로 변환
     const errorType = err.constructor.name
       .replace("Error", "") // "NotFoundError" → "NotFound"
       .toUpperCase(); // "NotFound" → "NOTFOUND"
 
-    return res.status(err.statusCode).json({
-      message: err.message,
-      error: errorType,
-    });
+    // 기본 응답 객체 생성
+    const response = {
+      message: err.message, // 사용자에게 보여줄 에러 메시지
+      error: errorType, // 에러 타입 (프론트엔드에서 에러 종류 구분용)
+    };
+
+    // ValidationError에서 path가 제공된 경우 응답에 포함
+    // path: 어떤 필드에서 에러가 발생했는지 알려주는 정보
+    // 예: { path: "nickname", message: "닉네임은 필수입니다" }
+    // → 프론트엔드에서 nickname 입력란에 에러 메시지 표시 가능
+    if (err.path) {
+      response.path = err.path;
+    }
+
+    return res.status(err.statusCode).json(response);
   }
 
   // ============================================
