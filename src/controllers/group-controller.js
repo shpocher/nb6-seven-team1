@@ -8,74 +8,82 @@ import prisma from "../utils/prisma.js";
 
 class GroupController {
   //group 데이터 목록 조회
-  async getGroupList(req, res) {
-    const {
-      page = 1,
-      limit = 10,
-      order = "createdAt",
-      sort = "desc",
-    } = req.query;
+  async getGroupList(req, res, next) {
+    try {
+      //목록 조회 쿼리 default값
+      const {
+        page = 1,
+        limit = 10,
+        order = "createdAt",
+        sort = "desc",
+        name,
+      } = req.query;
 
-    let orderBy;
-
-    switch (order) {
-      case "participantCount":
-        if (sort === "asc") {
-          orderBy = { participants: { _count: "acs" } };
-        } else {
-          orderBy = { participants: { _count: "desc" } };
-        }
-        break;
-      case "likeCount":
-        if (sort === "asc") {
-          orderBy = { likeCount: "asc" };
-        } else {
-          orderBy = { likeCount: "desc" };
-        }
-        break;
-      case "createdAt":
-        if (sort === "asc") {
-          orderBy = { createdAt: "asc" };
-        } else {
-          orderBy = { createdAt: "desc" };
-        }
-        break;
-      default:
+      //order 쿼리로 group데이터 출력 기준 및 순서 변경
+      if (sort !== "asc" && sort !== "desc") {
         throw new ValidationError(
-          `order은 반드시 ["createdAt", "likeCount", "participantCount"] 중 하나여야 합니다.`
+          "sort는 반드시 [asc, desc] 중 하나여야 합니다."
         );
-    }
+      }
 
-    const group = await prisma.group.findMany({
-      orderBy,
-      skip: (page - 1) * limit,
-      take: parseInt(limit),
-      select: {
-        id: true,
-        name: true,
-        // description: true,
-        // photoUrl: true,
-        // goalRep: true,
-        // discordWebhookUrl: true,
-        // discordInviteUrl: true,
-        // likeCount: true,
-        // tags: true,
-        owner: true,
-        //participants: true,
-        // createdAt: true,
-        // updatedAt: true,
-        // badges: true,
-      },
-    });
+      let orderBy;
 
-    if (!group) {
-      throw new NotFoundError("group 목록을 찾을 수 없습니다.");
+      switch (order) {
+        case "participantCount":
+          if (sort === "asc") {
+            orderBy = { participants: { _count: "asc" } };
+          } else {
+            orderBy = { participants: { _count: "desc" } };
+          }
+          break;
+        case "likeCount":
+          if (sort === "asc") {
+            orderBy = { likeCount: "asc" };
+          } else {
+            orderBy = { likeCount: "desc" };
+          }
+          break;
+        case "createdAt":
+          if (sort === "asc") {
+            orderBy = { createdAt: "asc" };
+          } else {
+            orderBy = { createdAt: "desc" };
+          }
+          break;
+        default:
+          throw new ValidationError(
+            `order은 반드시 [createdAt, likeCount, participantCount] 중 하나여야 합니다.`
+          );
+      }
+
+      //where을 통해 group 이름으로 검색이 가능하게 만듬
+      //group 이름의 일부가 입력되어도 존재한다면 group이 호출될수 있도록 함
+      //영어로 적혀있으면 대소문자 상관없이 호출될 수 있도록 함
+      const group = await prisma.group.findMany({
+        orderBy,
+        skip: (page - 1) * limit,
+        take: parseInt(limit),
+        where: {
+          name: {
+            contains: name,
+            mode: "insensitive",
+          },
+        },
+      });
+
+      //group 목록이 빈 배열로 나오는 것을 404 error로 처리할 필요가 있을때 밑의 코드 활성화.
+      // if (group.length === 0) {
+      //   throw new NotFoundError("group 목록을 찾을 수 없습니다.");
+      // }
+
+      res.status(200).json({ message: "목록 생성 완료", data: group });
+    } catch (err) {
+      next(err);
     }
-    res.status(200).json({ message: "목록 생성 완료", data: group });
   }
 
   //group 데이터 추가
-  async createGroup(req, res) {
+  async createGroup(req, res, next) {
     try {
       if (!req.body.name) {
         throw new ValidationError("그룹명은 필수입니다");
@@ -83,6 +91,10 @@ class GroupController {
 
       if (!Number.isInteger(req.body.goalRep) || req.body.goalRep <= 0) {
         throw new ValidationError("목표 횟수는 0 이상의 수여야 합니다.");
+      }
+
+      if (!req.body.ownerId) {
+        throw new ValidationError("소유자의 id가 없거나 인식되지 않았습니다.");
       }
 
       const group = await prisma.group.create({
@@ -94,91 +106,116 @@ class GroupController {
       res.status(201).json({ message: "group 생성 완료", data: group });
     } catch (err) {
       debugError("group 생성 실패", err);
-      throw err;
-    }
-  }
 
-  async getGroupDetail(req, res) {
-    const { id } = req.params;
-
-    const group = await prisma.group.findUnique({
-      where: { id: Number(id) },
+      next(err);
+      /*
+      res.status(err.statusCode).json({
+      message: err.message,
+      error: "SERVER_ERROR",
     });
-
-    if (!group) {
-      throw new NotFoundError("group ID가 존재하지 않습니다.");
+      */
     }
-    res.status(200).json({ message: "목록 생성 완료", data: group });
   }
 
-  async deleteGroup(req, res) {
-    const { id } = req.params;
-    const { pw } = req.body;
-    const group = await prisma.group.findUnique({
-      where: { id: Number(id) },
-      select: {
-        owner: {
-          select: {
-            password: true,
+  //group 상세내역 호출
+  async getGroupDetail(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const group = await prisma.group.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (!group) {
+        throw new NotFoundError("group ID가 존재하지 않습니다.");
+      }
+
+      res.status(200).json({ message: "목록 생성 완료", data: group });
+    } catch (err) {
+      debugError("group 호출 실패");
+      next(err);
+    }
+  }
+
+  //특정 group 삭제
+  async deleteGroup(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { pw } = req.body;
+      const group = await prisma.group.findUnique({
+        where: { id: Number(id) },
+        select: {
+          owner: {
+            select: {
+              password: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    const ownerPassword = group.owner.password;
-    debugLog(ownerPassword);
+      if (!group) {
+        throw new NotFoundError("group ID가 존재하지 않습니다.");
+      }
 
-    if (!group) {
-      throw new NotFoundError("group ID가 존재하지 않습니다.");
+      const ownerPassword = group.owner.password;
+      debugLog(ownerPassword);
+
+      if (pw !== ownerPassword) {
+        throw new UnauthorizedError("group owner의 비밀번호가 틀렸습니다.");
+      }
+      await prisma.group.delete({
+        where: { id: Number(id) },
+      });
+
+      res.status(200).json({ message: "group이 성공적으로 삭제되었습니다." });
+    } catch (err) {
+      next(err);
     }
-    if (pw !== ownerPassword) {
-      throw new UnauthorizedError("group owner의 비밀번호가 틀렸습니다.");
-    }
-    await prisma.group.delete({
-      where: { id: Number(id) },
-    });
-
-    res.status(200).json({ message: "group이 성공적으로 삭제되었습니다." });
   }
 
-  async patchGroup(req, res) {
-    const { id } = req.params;
-    const { pw } = req.body;
-    const group = await prisma.group.findUnique({
-      where: { id: Number(id) },
-      select: {
-        owner: {
-          select: {
-            password: true,
+  //특정 group 수정
+  async patchGroup(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { pw } = req.body;
+      const group = await prisma.group.findUnique({
+        where: { id: Number(id) },
+        select: {
+          owner: {
+            select: {
+              password: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    const ownerPassword = group.owner.password;
-    debugLog(ownerPassword);
+      const ownerPassword = group.owner.password;
+      debugLog(ownerPassword);
 
-    if (!group) {
-      throw new NotFoundError("group ID가 존재하지 않습니다.");
+      if (!group) {
+        throw new NotFoundError("group ID가 존재하지 않습니다.");
+      }
+      if (pw !== ownerPassword) {
+        throw new UnauthorizedError("group owner의 비밀번호가 틀렸습니다.");
+      }
+
+      await prisma.group.update({
+        where: { id: Number(id) },
+        data: req.body,
+      });
+
+      if (!req.body.name) {
+        throw new ValidationError("그룹명은 필수입니다");
+      }
+
+      if (!Number.isInteger(req.body.goalRep) || req.body.goalRep <= 0) {
+        throw new ValidationError("목표 횟수는 0 이상의 수여야 합니다.");
+      }
+
+      res.status(201).json({ message: "group 생성 완료", data: group });
+    } catch (err) {
+      next(err);
     }
-    // if (pw !== ownerPassword) {
-    //   throw new UnauthorizedError("group owner의 비밀번호가 틀렸습니다.");
-    // }
-
-    await prisma.group.update({
-      where: { id: Number(id) },
-      data: req.body,
-    });
-
-    if (!req.body.name) {
-      throw new ValidationError("그룹명은 필수입니다");
-    }
-
-    if (!Number.isInteger(req.body.goalRep) || req.body.goalRep <= 0) {
-      throw new ValidationError("목표 횟수는 0 이상의 수여야 합니다.");
-    }
-
-    res.status(201).json({ message: "group 생성 완료", data: group });
   }
 }
 
