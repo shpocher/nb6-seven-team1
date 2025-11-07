@@ -73,7 +73,7 @@ export class NotFoundError extends AppError {
  * }
  */
 export class UnauthorizedError extends AppError {
-  constructor(path, message = '비밀번호가 일치하지 않습니다') {
+  constructor(path, message = "비밀번호가 일치하지 않습니다") {
     // 상태 코드 401
     super(message, 401);
     this.path = path;
@@ -90,7 +90,7 @@ export class UnauthorizedError extends AppError {
  * }
  */
 export class ValidationError extends AppError {
-  constructor(path, message = '입력 데이터가 올바르지 않습니다') {
+  constructor(path, message = "입력 데이터가 올바르지 않습니다") {
     // 상태 코드 400 (Bad Request)
     super(message, 400);
     this.path = path;
