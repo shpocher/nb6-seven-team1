@@ -1,4 +1,4 @@
-import { debugError } from "../utils/debug.js";
+import { debugError } from '../utils/debug.js';
 
 // ============================================
 // [심화] Global Error Handling
@@ -57,7 +57,7 @@ export class AppError extends Error {
  * }
  */
 export class NotFoundError extends AppError {
-  constructor(message = "리소스를 찾을 수 없습니다") {
+  constructor(message = '리소스를 찾을 수 없습니다') {
     // AppError의 생성자를 호출하며 상태 코드 404 설정
     super(message, 404);
   }
@@ -73,9 +73,10 @@ export class NotFoundError extends AppError {
  * }
  */
 export class UnauthorizedError extends AppError {
-  constructor(message = "비밀번호가 일치하지 않습니다") {
+  constructor(path, message = '비밀번호가 일치하지 않습니다') {
     // 상태 코드 401
     super(message, 401);
+    this.path = path;
   }
 }
 
@@ -89,9 +90,10 @@ export class UnauthorizedError extends AppError {
  * }
  */
 export class ValidationError extends AppError {
-  constructor(message = "입력 데이터가 올바르지 않습니다") {
+  constructor(path, message = '입력 데이터가 올바르지 않습니다') {
     // 상태 코드 400 (Bad Request)
     super(message, 400);
+    this.path = path;
   }
 }
 
@@ -106,7 +108,7 @@ export class ValidationError extends AppError {
  * }
  */
 export class ConflictError extends AppError {
-  constructor(message = "이미 존재하는 데이터입니다") {
+  constructor(message = '이미 존재하는 데이터입니다') {
     // 상태 코드 409 (Conflict)
     super(message, 409);
   }
@@ -129,7 +131,7 @@ export class ConflictError extends AppError {
 export const errorHandler = (err, req, res, next) => {
   // >> 디버그 모드에서 에러 로그 출력
   // console이 아닌 debugError 사용 (DEBUG_MODE=true일 때만 표시)
-  debugError("에러 발생:", err);
+  debugError('에러 발생:', err);
 
   // ============================================
   // 1️. Prisma 에러 처리
@@ -140,19 +142,19 @@ export const errorHandler = (err, req, res, next) => {
 
   // P2002: 고유 제약조건 위반
   // 예: 같은 groupId와 nickname으로 두 번 등록하려고 할 때
-  if (err.code === "P2002") {
+  if (err.code === 'P2002') {
     return res.status(409).json({
-      message: "이미 존재하는 데이터입니다",
-      error: "CONFLICT", // 클라이언트가 구분하기 쉽게 에러 타입 명시
+      message: '이미 존재하는 데이터입니다',
+      error: 'CONFLICT', // 클라이언트가 구분하기 쉽게 에러 타입 명시
     });
   }
 
   // P2025: 업데이트/삭제할 레코드를 찾을 수 없음
   // 예: 존재하지 않는 그룹을 수정하려고 할 때
-  if (err.code === "P2025") {
+  if (err.code === 'P2025') {
     return res.status(404).json({
-      message: "리소스를 찾을 수 없습니다",
-      error: "NOT_FOUND",
+      message: '리소스를 찾을 수 없습니다',
+      error: 'NOT_FOUND',
     });
   }
 
@@ -163,10 +165,10 @@ export const errorHandler = (err, req, res, next) => {
   // 파일 크기 초과, 잘못된 형식 등의 에러가 발생할 때 처리
   // (@호성)이미지 업로드 작업 시 활용하세요
 
-  if (err.name === "MulterError") {
+  if (err.name === 'MulterError') {
     return res.status(400).json({
       message: err.message, // Multer에서 제공하는 에러 메시지
-      error: "FILE_UPLOAD_ERROR",
+      error: 'FILE_UPLOAD_ERROR',
     });
   }
 
@@ -179,15 +181,27 @@ export const errorHandler = (err, req, res, next) => {
     // 에러 클래스 이름 변환
     // NotFoundError → NOTFOUND
     // UnauthorizedError → UNAUTHORIZED
+    // ValidationError → VALIDATION
     // 마지막의 "Error" 텍스트를 제거하고 대문자로 변환
     const errorType = err.constructor.name
-      .replace("Error", "") // "NotFoundError" → "NotFound"
+      .replace('Error', '') // "NotFoundError" → "NotFound"
       .toUpperCase(); // "NotFound" → "NOTFOUND"
 
-    return res.status(err.statusCode).json({
-      message: err.message,
-      error: errorType,
-    });
+    // 기본 응답 객체 생성
+    const response = {
+      message: err.message, // 사용자에게 보여줄 에러 메시지
+      error: errorType, // 에러 타입 (프론트엔드에서 에러 종류 구분용)
+    };
+
+    // ValidationError에서 path가 제공된 경우 응답에 포함
+    // path: 어떤 필드에서 에러가 발생했는지 알려주는 정보
+    // 예: { path: "nickname", message: "닉네임은 필수입니다" }
+    // → 프론트엔드에서 nickname 입력란에 에러 메시지 표시 가능
+    if (err.path) {
+      response.path = err.path;
+    }
+
+    return res.status(err.statusCode).json(response);
   }
 
   // ============================================
@@ -198,11 +212,11 @@ export const errorHandler = (err, req, res, next) => {
   // 이외 보안성 노출하지 않는 정보 포함
 
   const statusCode = err.statusCode || 500; // 상태 코드 (기본값: 500 서버에러)
-  const message = err.message || "서버 에러가 발생했습니다";
+  const message = err.message || '서버 에러가 발생했습니다';
 
   res.status(statusCode).json({
     message,
-    error: "SERVER_ERROR", // 일반적인 서버 에러 응답
+    error: 'SERVER_ERROR', // 일반적인 서버 에러 응답
   });
 };
 
@@ -220,8 +234,8 @@ export const errorHandler = (err, req, res, next) => {
 
 export const notFoundHandler = (req, res) => {
   res.status(404).json({
-    message: "요청한 리소스를 찾을 수 없습니다",
-    error: "NOT_FOUND",
+    message: '요청한 리소스를 찾을 수 없습니다',
+    error: 'NOT_FOUND',
   });
 };
 

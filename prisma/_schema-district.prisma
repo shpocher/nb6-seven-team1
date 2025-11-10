@@ -1,0 +1,94 @@
+// // SEVEN 프로젝트 - 수정된 Prisma 스키마
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// // ============================================
+// // Group (그룹)
+// // ============================================
+// model Group {
+//   id                   Int      @id @default(autoincrement())
+//   name                 String   // 그룹명
+//   description          String   // 설명
+//   photoUrl             String?  @map("photo_url")  // 사진 (1개)
+//   goalRep              Int      @map("goal_rep")    // 목표 횟수
+//   tags                 String[] // 태그 배열
+//   discordWebhookUrl    String?  @map("discord_webhook_url")  // 디스코드 웹훅 URL
+//   discordInviteUrl     String?  @map("discord_invite_url")   // 디스코드 초대 URL
+//   likeCount            Int      @default(0) @map("like_count") // 추천수
+//   badges               String[] @default([])  // 배지 배열 ["PARTICIPANT_10", "RECORD_100", "LIKE_100"]
+  
+//   // 관계
+//   ownerId              Int      @map("owner_id")  // 그룹 생성자 (Participant)
+//   owner                Participant @relation("GroupOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+//   participants         Participant[] @relation("GroupParticipants")  // 참여자 목록
+//   records              Record[]  // 운동 기록 목록
+  
+//   // 타임스탬프
+//   createdAt            DateTime @default(now()) @map("created_at")
+//   updatedAt            DateTime @updatedAt @map("updated_at")
+
+//   @@map("groups")
+// }
+
+// // ============================================
+// // Participant (참여자)
+// // ============================================
+// model Participant {
+//   id        Int      @id @default(autoincrement())
+//   nickname  String   // 닉네임
+//   password  String   // 비밀번호 (평문 저장 - 실습용)
+//   groupId   Int      @map("group_id")  // 소속 그룹
+  
+//   // 관계
+//   group     Group    @relation("GroupParticipants", fields: [groupId], references: [id], onDelete: Cascade)
+//   ownedGroups Group[] @relation("GroupOwner")  // 이 참여자가 소유한 그룹들
+//   records   Record[] // 작성한 운동 기록
+  
+//   // 타임스탬프
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   // 제약조건: 같은 그룹 내에서 닉네임 중복 불가
+//   @@unique([groupId, nickname], name: "unique_nickname_per_group")
+//   @@map("participants")
+// }
+
+// // ============================================
+// // Record (운동 기록)
+// // ============================================
+// model Record {
+//   id           Int      @id @default(autoincrement())
+//   exerciseType ExerciseType @map("exercise_type")  // 운동 종류
+//   description  String   // 설명
+//   time         Int      // 운동 시간 (초 단위)
+//   distance     Float    // 거리 (km)
+//   photos       String[] @default([])  // 사진 배열 (최대 3개)
+  
+//   // 관계
+//   groupId      Int      @map("group_id")
+//   group        Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+//   authorId     Int      @map("author_id")  // 작성자
+//   author       Participant @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+//   // 타임스탬프
+//   createdAt    DateTime @default(now()) @map("created_at")
+//   updatedAt    DateTime @updatedAt @map("updated_at")
+
+//   @@map("records")
+// }
+
+// // ============================================
+// // Enum
+// // ============================================
+// enum ExerciseType {
+//   run   // 달리기
+//   bike  // 자전거
+//   swim  // 수영
+// }
