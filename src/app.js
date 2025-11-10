@@ -1,14 +1,15 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-import { errorHandler, notFoundHandler } from "./middlewares/error-handler.js";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { errorHandler, notFoundHandler } from './middlewares/error-handler.js';
 import imageRoutes from './routes/image-routes.js';
-import healthRoutes from "./routes/health-routes.js";
+import healthRoutes from './routes/health-routes.js';
 import participantRoutes from './routes/participant-routes.js';
-import groupLikeCount from "./routes/group-like-count-routes.js";
-import { debugLog } from "./utils/debug.js";
+import groupLikeCount from './routes/group-like-count-routes.js';
+import rankingRoutes from './routes/ranking-routes.js';
+import { debugLog } from './utils/debug.js';
 
 // ES 모듈에서 __dirname 사용하기
 const __filename = fileURLToPath(import.meta.url);
@@ -40,9 +41,10 @@ app.use('/health', healthRoutes);
 // 1. 이미지 업로드
 app.use('/images', imageRoutes);
 
-// 3. 그룹 관련 라우터들 
-app.use('/groups', participantRoutes);    // /groups/:groupId/participants
-app.use("/groups", groupLikeCount);       // /groups/:groupId/like
+// 3. 그룹 관련 라우터들
+app.use('/groups', participantRoutes); // /groups/:groupId/participants
+app.use('/groups', groupLikeCount); // /groups/:groupId/like
+app.use('/groups', rankingRoutes); // /groups/:groupId/rank
 
 // 404 핸들러
 app.use(notFoundHandler);
