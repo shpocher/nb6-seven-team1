@@ -121,7 +121,7 @@ class GroupController {
 
       res.status(200).json({ message: "group 상세 조회 완료", data: group });
     } catch (err) {
-      debugError("group 호출 실패");
+      debugError("group 호출 실패", err);
       next(err);
     }
   }
