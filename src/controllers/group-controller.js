@@ -30,25 +30,13 @@ class GroupController {
 
       switch (order) {
         case "participantCount":
-          if (sort === "asc") {
-            orderBy = { participants: { _count: "asc" } };
-          } else {
-            orderBy = { participants: { _count: "desc" } };
-          }
+          orderBy = { participants: { _count: sort } };
           break;
         case "likeCount":
-          if (sort === "asc") {
-            orderBy = { likeCount: "asc" };
-          } else {
-            orderBy = { likeCount: "desc" };
-          }
+          orderBy = { likeCount: sort };
           break;
         case "createdAt":
-          if (sort === "asc") {
-            orderBy = { createdAt: "asc" };
-          } else {
-            orderBy = { createdAt: "desc" };
-          }
+          orderBy = { createdAt: sort };
           break;
         default:
           throw new ValidationError(
@@ -59,7 +47,7 @@ class GroupController {
       //where을 통해 group 이름으로 검색이 가능하게 만듬
       //group 이름의 일부가 입력되어도 존재한다면 group이 호출될수 있도록 함
       //영어로 적혀있으면 대소문자 상관없이 호출될 수 있도록 함
-      const group = await prisma.group.findMany({
+      const groups = await prisma.group.findMany({
         orderBy,
         skip: (page - 1) * limit,
         take: parseInt(limit),
@@ -76,7 +64,7 @@ class GroupController {
       //   throw new NotFoundError("group 목록을 찾을 수 없습니다.");
       // }
 
-      res.status(200).json({ message: "목록 생성 완료", data: group });
+      res.status(200).json({ message: "목록 생성 완료", data: groups });
     } catch (err) {
       next(err);
     }
@@ -130,7 +118,7 @@ class GroupController {
         throw new NotFoundError("group ID가 존재하지 않습니다.");
       }
 
-      res.status(200).json({ message: "목록 생성 완료", data: group });
+      res.status(200).json({ message: "group 상세 조회 완료", data: group });
     } catch (err) {
       debugError("group 호출 실패");
       next(err);
@@ -163,6 +151,7 @@ class GroupController {
       if (pw !== ownerPassword) {
         throw new UnauthorizedError("group owner의 비밀번호가 틀렸습니다.");
       }
+
       await prisma.group.delete({
         where: { id: Number(id) },
       });
@@ -189,14 +178,26 @@ class GroupController {
         },
       });
 
-      const ownerPassword = group.owner.password;
-      debugLog(ownerPassword);
-
       if (!group) {
         throw new NotFoundError("group ID가 존재하지 않습니다.");
       }
+
+      const ownerPassword = group.owner.password;
+      debugLog(ownerPassword);
+
       if (pw !== ownerPassword) {
         throw new UnauthorizedError("group owner의 비밀번호가 틀렸습니다.");
+      }
+
+      if (!req.body.name) {
+        throw new ValidationError("그룹명은 필수입니다");
+      }
+
+      if (
+        !Number.isInteger(req.body.goalRep) ||
+        Number(req.body.goalRep) <= 0
+      ) {
+        throw new ValidationError("목표 횟수는 0 이상의 수여야 합니다.");
       }
 
       await prisma.group.update({
@@ -204,15 +205,7 @@ class GroupController {
         data: req.body,
       });
 
-      if (!req.body.name) {
-        throw new ValidationError("그룹명은 필수입니다");
-      }
-
-      if (!Number.isInteger(req.body.goalRep) || req.body.goalRep <= 0) {
-        throw new ValidationError("목표 횟수는 0 이상의 수여야 합니다.");
-      }
-
-      res.status(201).json({ message: "group 생성 완료", data: group });
+      res.status(201).json({ message: "group 수정 완료", data: group });
     } catch (err) {
       next(err);
     }
