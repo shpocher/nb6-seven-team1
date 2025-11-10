@@ -1,4 +1,5 @@
 import prisma from '../utils/prisma.js';
+import { debugError } from '../utils/debug.js';
 import {
   UnauthorizedError,
   ConflictError,
@@ -7,7 +8,7 @@ import {
 } from '../middlewares/error-handler.js';
 
 class ParticipantController {
-  async createParticipant(req, res) {
+  async createParticipant(req, res, next) {
     try {
       const { nickname, password } = req.body;
       const { groupId } = req.params;
@@ -61,15 +62,13 @@ class ParticipantController {
       };
 
       res.status(200).send(responseData);
-    } catch (e) {
-      res.status(e.statusCode).send({
-        path: e.path,
-        message: e.message,
-      });
+    } catch (error) {
+      debugError('참여자 생성 실패:', error);
+      next(error);
     }
   }
 
-  async deleteParticipant(req, res) {
+  async deleteParticipant(req, res, next) {
     try {
       //구현
       const { nickname, password } = req.body;
@@ -108,11 +107,9 @@ class ParticipantController {
         where: { id: participant.id },
       });
       res.sendStatus(204);
-    } catch (e) {
-      res.status(e.statusCode).send({
-        path: e.path,
-        message: e.message,
-      });
+    } catch (error) {
+      debugError('참여자 탈퇴 실패:', error);
+      next(error);
     }
   }
 }
