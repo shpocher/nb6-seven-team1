@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>코드잇 NB6기 1팀 - SEVEN</title>
+    <title>NB6기 1팀 중간발표 - SEVEN</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -39,18 +39,21 @@
       }
 
       .slide-container {
+        /* --- 1920x1080 (16:9) --- */
         width: 1920px;
         height: 1080px;
+        /* --- 검은 바탕 --- */
         background-color: #111;
+        /* --- Apple/Awwwards 스타일 (여백) --- */
         padding: 90px;
         border-radius: 12px;
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        display: none; /* 기본 숨김 */
+        display: none; /* JS로 제어 */
         flex-direction: column;
         justify-content: center;
         overflow: hidden;
         position: relative;
-        font-family: "Inter", "Apple SD Gothic Neo", sans-serif;
+        font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif;
         margin: 30px auto;
       }
 
@@ -63,12 +66,12 @@
         z-index: 1;
       }
 
-      /* 2. CONSISTENT TYPOGRAPHY (1.5x Scaled) */
+      /* 2. CONSISTENT TYPOGRAPHY */
       .slide-container h1,
       .slide-container h2,
       .slide-container h3 {
         color: #fafafa;
-        font-family: "Inter", sans-serif;
+        font-family: 'Inter', sans-serif;
         font-weight: 700;
         margin: 0;
       }
@@ -86,6 +89,7 @@
         margin-bottom: 60px;
         text-align: left;
         width: 100%;
+        /* --- Red Accent --- */
         border-left: 6px solid #e50914;
         padding-left: 20px;
       }
@@ -99,17 +103,9 @@
 
       .slide-container p,
       .slide-container li,
-      .slide-container .subtitle,
-      .slide-container .number-label,
-      .slide-container .legend li,
-      .slide-container .chart-summary,
-      .slide-container .bar .label,
-      .slide-container th,
-      .slide-container td,
-      .slide-container .alternating-text-tile p,
-      .slide-container .bleed-text-side p {
+      .slide-container .subtitle {
         color: #d1d1d1;
-        font-family: "Inter", sans-serif;
+        font-family: 'Inter', sans-serif;
         font-size: 27px;
         line-height: 1.6;
       }
@@ -129,6 +125,7 @@
         width: 100%;
       }
 
+      /* --- Red Accent --- */
       .slide-container .accent,
       .slide-container .icon,
       .slide-container .bullet-list i,
@@ -136,13 +133,48 @@
         color: #e50914;
       }
 
-      /* 3. LAYOUT DEFINITIONS (축약됨 - 이전과 동일) */
+      /* --- 코드 블록 스타일 --- */
+      .slide-container pre {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 25px;
+        font-family: 'SF Mono', 'Courier New', monospace;
+        font-size: 24px;
+        color: #e0e0e0;
+        white-space: pre-wrap;
+        word-break: break-all;
+        line-height: 1.5;
+      }
+      .slide-container code .comment {
+        color: #6a9955;
+        font-style: italic;
+      }
+      .slide-container code .string {
+        color: #ce9178;
+      }
+      .slide-container code .keyword {
+        color: #c586c0;
+      }
+      .slide-container code .number {
+        color: #b5cea8;
+      }
+      .slide-container code .variable {
+        color: #9cdcfe;
+      }
+      .slide-container code .operator {
+        color: #d4d4d4;
+      }
+
+      /* 3. LAYOUT DEFINITIONS */
 
       /* Layout: Title_Slide */
       .title-layout {
         text-align: left;
         width: 100%;
       }
+
+      /* Layout: Two_Column */
       .two-column {
         align-items: flex-start;
         display: grid;
@@ -175,38 +207,65 @@
         position: relative;
       }
       .two-column li::before {
-        content: "■";
+        content: '■';
         position: absolute;
         left: 0;
         top: 2px;
         color: #e50914;
         font-size: 20px;
       }
+
       .placeholder-wrapper {
-        border-radius: 18px;
-        overflow: hidden;
+        border-radius: 18px; /* 라운드 */
+        overflow: hidden; /* 라운드로 자르기 */
         width: 100%;
-        height: 675px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        height: 800px; /* 기본 높이 고정 */
+        display: flex; /* [수정됨] <img>를 중앙 정렬하기 위해 flex 사용 */
+        align-items: center; /* [수정됨] 수직 중앙 */
+        justify-content: center; /* [수정됨] 수평 중앙 */
         background-color: #222;
-        border: 2px dashed #444;
+        border: 2px dashed #444; /* 점선 테두리 */
+        position: relative; /* img를 위한 기준 */
       }
-      .placeholder-wrapper img {
+
+      /* 슬라이드 17의 wrapper는 높이가 100%이므로 별도 처리 */
+      .slide-container[id='slide17'] .placeholder-wrapper {
         height: 100%;
-        object-fit: contain;
-        width: 100%;
       }
+
+      /* 텍스트 스타일 */
       .placeholder-text {
         color: #666;
         font-size: 30px;
         font-weight: 700;
+        text-align: center;
+        /* [삭제됨] z-index: 1; <- No longer needed */
       }
+
+      /* <!-- ... existing code ... -->
+  이 규칙이 어떤 이미지를 넣어도 꽉 채우고 리사이즈합니다.
+*/
+      .placeholder-wrapper img {
+        /* [수정됨] object-fit: contain; 
+    - 이미지 비율을 유지하면서
+    - .placeholder-wrapper 영역 안에 자연스럽게 들어옵니다.
+  */
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+
+        /* [수정됨] position: absolute 관련 속성 모두 삭제
+    - 부모의 flex-box가 중앙 정렬을 담당합니다.
+  */
+        display: block;
+      }
+      /* ================================================================ */
+
+      /* Layout: Tiled_Text_With_Icons */
       .tiled-content {
         align-items: stretch;
         display: flex;
-        gap: 60px;
+        gap: 40px;
         justify-content: center;
         width: 100%;
       }
@@ -221,20 +280,53 @@
         justify-content: flex-start;
         padding: 45px;
         text-align: left;
+        transition: all 0.3s ease;
+      }
+      .tile:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       }
       .tile .icon {
-        font-size: 72px;
+        font-size: 60px;
         margin-bottom: 30px;
       }
       .tile h3 {
         font-size: 36px;
         color: #fafafa;
       }
-      .tile p {
+      .tile p,
+      .tile li {
         font-size: 24px;
       }
+      .tile ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 15px;
+      }
+      .tile li {
+        font-size: 24px;
+        padding-left: 30px;
+        position: relative;
+        margin-bottom: 10px;
+      }
+      .tile li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #22c55e;
+      }
+      /* 6-tile layout (for slide 18) */
+      .tiled-content.six-tiles {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 40px;
+      }
+
+      /* Layout: Styled_Bullet_Points */
       .bullet-list {
-        max-width: 1350px;
+        max-width: 100%;
         width: 100%;
       }
       .bullet-list ul {
@@ -264,6 +356,8 @@
         font-size: 30px;
         line-height: 1.6;
       }
+
+      /* Layout: Bar_Chart_For_Comparisons */
       .chart-container {
         display: flex;
         flex-direction: column;
@@ -299,6 +393,7 @@
         height: 100%;
         justify-content: flex-end;
         padding-right: 22px;
+        transition: width 0.5s ease-out;
       }
       .chart-summary {
         font-style: italic;
@@ -306,6 +401,8 @@
         max-width: 90%;
         text-align: center;
       }
+
+      /* Layout: Timeline */
       .timeline-layout {
         align-items: stretch;
         display: flex;
@@ -328,13 +425,13 @@
       .timeline-item {
         position: relative;
         text-align: center;
-        width: 18%;
+        width: 22%;
       }
       .timeline-item::after {
         background-color: #111;
         border-radius: 50%;
         border: 6px solid #e50914;
-        content: "";
+        content: '';
         height: 30px;
         left: 50%;
         position: absolute;
@@ -362,6 +459,8 @@
       .timeline-item p {
         font-size: 24px;
       }
+
+      /* Layout: Q&A */
       .qa-layout {
         text-align: center;
         width: 100%;
@@ -377,7 +476,7 @@
         color: #d1d1d1;
       }
 
-      /* --- 인터랙션을 위한 내비게이션 컨트롤 --- */
+      /* --- 내비게이션 컨트롤 --- */
       .nav-controls {
         position: fixed;
         bottom: 30px;
@@ -392,7 +491,6 @@
         border-radius: 50px;
         border: 1px solid #333;
       }
-
       .nav-controls button {
         background-color: transparent;
         border: 2px solid #555;
@@ -404,21 +502,18 @@
         cursor: pointer;
         transition: all 0.3s ease;
       }
-
       .nav-controls button:hover {
         background-color: #e50914;
         border-color: #e50914;
       }
-
       .nav-controls button:disabled {
         opacity: 0.3;
         cursor: not-allowed;
         background-color: transparent;
         border-color: #333;
       }
-
       #slide-counter {
-        font-family: "Inter", sans-serif;
+        font-family: 'Inter', sans-serif;
         font-size: 20px;
         color: #fafafa;
         font-weight: 700;
@@ -426,97 +521,105 @@
         text-align: center;
       }
 
-      /* ==================================================================
-  ↓↓↓ [신규] PDF 변환(인쇄)용 스타일 ↓↓↓
+      /* 
+==================================================================
+  ↓↓↓ PDF 변환(인쇄)용 스타일 ↓↓↓
 ==================================================================
 */
       @media print {
-        /* 페이지 자체의 배경은 흰색으로 리셋 */
         body {
           background-color: #fff !important;
           margin: 0 !important;
           padding: 0 !important;
         }
-
-        /* 인터랙티브 요소(배경, 버튼) 숨기기 */
         #p5-canvas,
         .nav-controls {
           display: none !important;
         }
-
-        /* 모든 슬라이드를 16:9 비율의 블록으로 표시 */
         .slide-container {
           display: block !important;
           width: 100% !important;
           height: auto !important;
           aspect-ratio: 16 / 9 !important;
-
-          /* 테마 유지: 검은 배경, 흰/빨강 텍스트 */
           background-color: #111 !important;
           -webkit-print-color-adjust: exact;
           color-adjust: exact;
-
-          /* 페이지 나누기 */
           page-break-after: always;
-
-          /* 인쇄 시 불필요S한 요소 제거 */
           margin: 0 !important;
-          padding: 90px !important; /* 내부 여백 유지 */
+          padding: 90px !important;
           box-shadow: none !important;
           border: none !important;
           border-radius: 0 !important;
-          overflow: hidden !important; /* 내용이 넘치지 않도록 */
+          overflow: hidden !important;
         }
-
-        /* 마지막 슬라이드 뒤에는 페이지 나누기 안함 */
         .slide-container:last-child {
           page-break-after: auto;
         }
-
-        /* 폰트가 얇아지는 것을 방지 (인쇄 최적화) */
         h1,
         h2,
         h3,
         p,
         li,
         .accent,
-        .icon {
+        .icon,
+        pre,
+        code {
           -webkit-print-color-adjust: exact;
           color-adjust: exact;
         }
-
-        /* 플레이스홀더 텍스트도 보이도록 */
         .placeholder-text {
           color: #666 !important;
           -webkit-print-color-adjust: exact;
           color-adjust: exact;
         }
-
-        /* 차트 바 색상 유지 */
+        /* img도 인쇄 시 보이도록 */
+        .placeholder-wrapper img {
+          display: block !important;
+          -webkit-print-color-adjust: exact;
+          color-adjust: exact;
+        }
         .bar .bar-fill {
           background: linear-gradient(90deg, #e50914, #ff3b4a) !important;
           -webkit-print-color-adjust: exact;
           color-adjust: exact;
         }
+        .tile {
+          box-shadow: none !important;
+        }
+        /* 코드 블록 인쇄 스타일 */
+        pre {
+          background-color: #1e1e1e !important;
+          border: 1px solid #333 !important;
+        }
+        code .comment {
+          color: #6a9955 !important;
+        }
+        code .string {
+          color: #ce9178 !important;
+        }
+        code .keyword {
+          color: #c586c0 !important;
+        }
+        code .number {
+          color: #b5cea8 !important;
+        }
+        code .variable {
+          color: #9cdcfe !important;
+        }
       }
 
-      /* 인쇄 페이지 설정 (브라우저 다이얼로그에서도 설정해야 함) */
       @page {
-        size: landscape; /* 가로 방향 */
-        margin: 0; /* 여백 없음 */
+        size: landscape;
+        margin: 0;
       }
     </style>
   </head>
   <body>
     <!-- 내비게이션 컨트롤 UI (인쇄 시 자동 숨김) -->
     <div class="nav-controls">
-      <button id="prev-slide" title="Previous Slide">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
-      <span id="slide-counter">1 / 16</span>
-      <button id="next-slide" title="Next Slide">
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
+      <button id="prev-slide" title="Previous Slide"><i class="fa-solid fa-arrow-left"></i></button>
+      <span id="slide-counter">1 / 20</span>
+      <button id="next-slide" title="Next Slide"><i class="fa-solid fa-arrow-right"></i></button>
     </div>
 
     <!-- SLIDE 1: Title_Slide -->
@@ -525,288 +628,538 @@
         <h1>SEVEN</h1>
         <p class="subtitle">
           운동 커뮤니티<br /><span class="accent" style="font-weight: 700"
-            >NB6기 1팀</span
+            >NB6기 1팀 프로젝트 중간 발표</span
           >
         </p>
       </div>
     </div>
 
-    <!-- SLIDE 2: 프로젝트 개요 -->
+    <!-- SLIDE 2: 프로젝트 개요 및 목표 (Tiled_Text_With_Icons) -->
     <div class="slide-container" id="slide2">
-      <h2 class="slide-title">프로젝트 개요</h2>
+      <h2 class="slide-title">프로젝트 개요 및 목표</h2>
       <div class="content-area">
         <div class="tiled-content">
           <div class="tile">
-            <div class="icon"><i class="fa-solid fa-lightbulb"></i></div>
-            <h3>프로젝트</h3>
+            <div class="icon"><i class="fa-solid fa-bullseye"></i></div>
+            <h3>개발 목표</h3>
             <p>
-              <strong>이름:</strong> SEVEN (운동 커뮤니티)<br /><strong
-                >기간:</strong
-              >
-              2주 (백엔드 API 개발)<br /><strong>팀:</strong> 총 6명
+              닉네임 기반의 간편한 그룹 운동 커뮤니티를 구축하고, 백엔드 API를 완성하여 프론트엔드와
+              연동
             </p>
           </div>
           <div class="tile">
-            <div class="icon"><i class="fa-solid fa-users"></i></div>
-            <h3>그룹 기능</h3>
-            <p>
-              닉네임 기반 그룹 생성<br />그룹 챌린지<br />그룹별 랭킹 시스템
-            </p>
+            <div class="icon"><i class="fa-solid fa-calendar-check"></i></div>
+            <h3>개발 기간 및 팀</h3>
+            <p><strong>기간:</strong> 2주 (백엔드 API 개발)<br /><strong>팀:</strong> 총 6명</p>
           </div>
           <div class="tile">
-            <div class="icon"><i class="fa-solid fa-running"></i></div>
-            <h3>운동 기록</h3>
-            <p>
-              운동 기록 인증<br />(러닝 / 사이클링 / 수영)<br />이미지 업로드
-            </p>
-          </div>
-          <div class="tile">
-            <div class="icon"><i class="fa-solid fa-trophy"></i></div>
-            <h3>보상 시스템</h3>
-            <p>운동 기록 뱃지<br />챌린지 달성 뱃지<br />랭킹에 따른 보상</p>
+            <div class="icon"><i class="fa-solid fa-star"></i></div>
+            <h3>핵심 기능</h3>
+            <ul>
+              <li>회원가입 없는 닉네임 그룹</li>
+              <li>운동 기록 인증 (3종목)</li>
+              <li>그룹 챌린지 및 랭킹</li>
+              <li>뱃지 시스템</li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 3: 작업 분장 및 협업 방식 -->
+    <!-- SLIDE 3: 팀 구성 및 역할 분담 (Two_Column_Tiled_Text) -->
     <div class="slide-container" id="slide3">
-      <h2 class="slide-title">작업 분장 및 협업 방식</h2>
+      <h2 class="slide-title">팀 구성 및 역할 분담</h2>
       <div class="content-area">
         <div class="two-column tiled">
           <div>
             <h3><span class="accent">팀 역할</span> 구조</h3>
             <ul>
-              <li>
-                <strong>팀장:</strong> R&R 정의, 일정 관리, 발표, 이미지 업로드
-              </li>
-              <li>
-                <strong>상휘:</strong> 프로젝트 설계, 코드 리뷰, Git, 운동기록
-                API
-              </li>
-              <li><strong>지선:</strong> 문서 관리, 그룹 추천 API</li>
+              <li><strong>팀장 (호성):</strong> R&R, 일정, 발표 / 이미지 업로드 / 랭킹</li>
+              <li><strong>상휘:</strong> 프로젝트 설계, Git 관리, 코드 리뷰 / 운동기록 API</li>
+              <li><strong>지선:</strong> 문서 관리 / 그룹 추천 API</li>
               <li><strong>동원:</strong> 그룹 API</li>
               <li><strong>영준:</strong> 참여자 API</li>
               <li><strong>지민:</strong> 랭킹 API</li>
             </ul>
           </div>
           <div>
-            <h3><span class="accent">작업 분장</span> 원칙</h3>
+            <h3><span class="accent">협업</span> 방식</h3>
             <ul>
-              <li>API 엔드포인트 단위로 명확히 분배</li>
-              <li>팀원 간 의존성을 최소화하는 기능 단위</li>
-              <li>독립적 작업 후 PR(Pull Request) 기반 워크플로우</li>
-              <li>동료 코드 리뷰 (Peer Review) 후 Merge</li>
+              <li>API 엔드포인트 단위 작업 분배</li>
+              <li>Git 브랜치 전략 (main -> feature)</li>
+              <li>PR (Pull Request) 기반 워크플로우</li>
+              <li>실무 중심의 코드 리뷰</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 4: 개발 프로세스 -->
+    <!-- SLIDE 4: 전체 진행 상황 (Bar_Chart + Tiled) -->
     <div class="slide-container" id="slide4">
-      <h2 class="slide-title">개발 프로세스</h2>
-      <div class="content-area">
-        <div class="timeline-layout">
-          <div class="timeline-line"></div>
-          <div class="timeline-item">
-            <div class="content-wrapper">
-              <h3>1. 설계</h3>
-              <p>스키마 설계<br />API 명세서 정의</p>
+      <h2 class="slide-title">전체 진행 상황 (목표 대비 진척도)</h2>
+      <div class="content-area" style="flex-direction: column; align-items: flex-start; gap: 40px">
+        <!-- Bar_Chart -->
+        <div class="chart-container">
+          <div class="bar">
+            <div class="label" style="font-size: 36px; color: #fafafa">전체 완료율</div>
+            <div class="bar-inner">
+              <div
+                class="bar-fill"
+                id="progress-bar"
+                style="
+                  width: 90%;
+                  background: linear-gradient(90deg, #e50914, #ff3b4a);
+                  height: 80px;
+                  font-size: 36px;
+                "
+              >
+                90%
+              </div>
             </div>
           </div>
-          <div class="timeline-item">
-            <div class="content-wrapper">
-              <h3>2. 구축</h3>
-              <p>프로젝트 설정<br />코드 컨벤션 구축</p>
-            </div>
+        </div>
+        <!-- Tiled_Content -->
+        <div class="tiled-content">
+          <div class="tile">
+            <h3 style="color: #22c55e">✅ 완료된 작업</h3>
+            <ul>
+              <li>DB 스키마 설계</li>
+              <li>API 11/12개 구현</li>
+              <li>공통 인프라 구축</li>
+              <li>이미지 업로드 시스템</li>
+              <li>더미데이터 스크립트</li>
+            </ul>
           </div>
-          <div class="timeline-item">
-            <div class="content-wrapper">
-              <h3>3. 개발</h3>
-              <p>기능별<br />독립 개발</p>
-            </div>
+          <div class="tile">
+            <h3 style="color: #f59e0b">🔄 진행 중</h3>
+            <ul>
+              <li>PR 통합 및 최종 코드 리뷰</li>
+              <li>프론트엔드 연동 준비</li>
+            </ul>
           </div>
-          <div class="timeline-item">
-            <div class="content-wrapper">
-              <h3>4. 통합</h3>
-              <p>코드 리뷰<br />PR 통합</p>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="content-wrapper">
-              <h3>5. 테스트</h3>
-              <p>통합 테스트<br />프론트 연동</p>
-            </div>
+          <div class="tile">
+            <h3 style="color: #60a5fa">📅 예정</h3>
+            <ul>
+              <li>연동형 기능 구현</li>
+              <li>통합 테스트</li>
+              <li>Render 배포</li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 5: 기술 스택 & 아키텍처 -->
+    <!-- SLIDE 5: 완료된 주요 기능 - 기술 스택 (Image_Right_Text_Left) -->
     <div class="slide-container" id="slide5">
-      <h2 class="slide-title">기술 스택 & 아키텍처</h2>
+      <h2 class="slide-title">완료된 주요 기능 - 기술 스택</h2>
       <div class="content-area">
         <div class="two-column">
           <div>
+            <!-- 텍스트 영역 -->
             <h3>Backend</h3>
             <ul>
               <li>Node.js + Express</li>
               <li>Prisma ORM + PostgreSQL</li>
               <li>Multer (이미지 업로드)</li>
             </ul>
-            <h3 style="margin-top: 40px">Frontend</h3>
+            <h3 style="margin-top: 40px">DevOps & Tools</h3>
             <ul>
-              <li>Next.js (Static Build)</li>
+              <li>GitHub (Fork 기반 협업)</li>
+              <li>Prettier (코드 포맷팅)</li>
               <li>Render (배포 예정)</li>
+            </ul>
+            <h3 style="margin-top: 40px">개발 원칙</h3>
+            <ul>
+              <li>RESTful API 설계</li>
+              <li>단일 책임 원칙 (SRP)</li>
+              <li>환경별 독립적 설정</li>
             </ul>
           </div>
           <div>
+            <!-- 이미지 영역 -->
             <div class="placeholder-wrapper">
-              <span class="placeholder-text"
-                >📸 API 엔드포인트 구조 (이미지 영역)</span
-              >
+              <img src="images/p5.png" alt="아키텍처" />
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 6: DB 설계 - 순환참조 문제 -->
+    <!-- SLIDE 6: 완료된 주요 기능 - API 구현 현황 (Two_Column Bullets) -->
     <div class="slide-container" id="slide6">
-      <h2 class="slide-title">
-        DB 설계 - <span class="accent">순환참조 문제</span>
-      </h2>
+      <h2 class="slide-title">완료된 주요 기능 - API 구현 현황 (11 / 12)</h2>
+      <div class="content-area">
+        <div class="two-column">
+          <!-- Column 1 -->
+          <div class="bullet-list">
+            <h3>그룹 관리</h3>
+            <ul>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>그룹 생성/조회/수정/삭제</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>그룹 목록 조회 (페이지네이션)</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>그룹 상세 정보</p>
+              </li>
+            </ul>
+            <h3 style="margin-top: 30px">참여자 관리</h3>
+            <ul>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>그룹 참여/취소</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>참여자 목록 조회</p>
+              </li>
+            </ul>
+          </div>
+          <!-- Column 2 -->
+          <div class="bullet-list">
+            <h3>운동 기록</h3>
+            <ul>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>운동 기록 생성/조회</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>운동 기록 상세 정보</p>
+              </li>
+            </ul>
+            <h3 style="margin-top: 30px">기타</h3>
+            <ul>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>그룹 추천 좋아요/취소</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-check" style="color: #22c55e"></i>
+                <p>이미지 파일 업로드</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-spinner" style="color: #f59e0b"></i>
+                <p>그룹 랭킹 조회 (진행 중)</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: 완료된 주요 기능 - 프로젝트 설정 & 표준화 (Image_Right_Text_Left) -->
+    <div class="slide-container" id="slide7">
+      <h2 class="slide-title">완료된 주요 기능 - 프로젝트 설정 & 표준화</h2>
+      <div class="content-area">
+        <div class="two-column">
+          <div>
+            <h3>표준화된 설정</h3>
+            <ul>
+              <li>개발 가이드 파일 제공 (ESLint, Prettier 통일)</li>
+              <li>환경 변수 템플릿 (.env.example)</li>
+              <li>Git 브랜치 전략 가이드</li>
+            </ul>
+            <h3 style="margin-top: 30px">코드 컨벤션</h3>
+            <ul>
+              <li>파일명: kebab-case</li>
+              <li>함수명: camelCase</li>
+              <li>비동기: async/await 통일</li>
+            </ul>
+            <h3 style="margin-top: 30px">문서화</h3>
+            <ul>
+              <li>API 명세서 (Postman)</li>
+              <li>설치/트러블슈팅 가이드 (Markdown)</li>
+            </ul>
+          </div>
+          <div>
+            <div class="placeholder-wrapper">
+              <img src="images/p7.png" alt="환경변수" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 기타: 이미지 템플릿 -->
+    <div class="slide-container" id="slide7-1">
+      <h2 class="slide-title">스크린샷 : 설정 가이드</h2>
+      <div class="content-area">
+        <div class="placeholder-wrapper">
+          <img src="images/code_guide.png" alt="설정 가이드 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 기타: 이미지 템플릿 -->
+    <div class="slide-container" id="slide7-2">
+      <h2 class="slide-title">스크린샷 : 코드 컨벤션</h2>
+      <div class="content-area">
+        <div class="placeholder-wrapper">
+          <img src="images/code_rule.png" alt="코드 컨벤션 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 기타: 이미지 템플릿 -->
+    <div class="slide-container" id="slide7-3">
+      <h2 class="slide-title">스크린샷 : 작업 예시 안내</h2>
+      <div class="content-area">
+        <div class="placeholder-wrapper">
+          <img src="images/code_example.png" alt="작업 예시 설명" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: 완료된 주요 기능 - 개발 효율화 시스템 (Two_Column_Tiled_Text) -->
+    <div class="slide-container" id="slide8">
+      <h2 class="slide-title">완료된 주요 기능 - 개발 효율화 시스템</h2>
+      <div class="content-area">
+        <div class="two-column tiled">
+          <div>
+            <h3><span class="accent">더미데이터</span> 자동 생성</h3>
+            <p>
+              <strong>내용:</strong> `seed.js`로 테스트 데이터 자동 생성 (한글 prefix로 식별), 전체
+              연관 관계(그룹→참가자→기록) 구축
+            </p>
+            <p style="margin-top: 20px">
+              <strong>효과:</strong> 모든 팀원이 동일한 테스트 환경 확보, API 테스트 시간 단축,
+              데이터 일관성 유지
+            </p>
+          </div>
+          <div>
+            <h3><span class="accent">개발 환경</span> 통일</h3>
+            <p>
+              <strong>내용:</strong> '팀1_초급프로젝트_개발가이드.md', '팀1_feature_반영가이드.md'
+              등 상세 문서 제공
+            </p>
+            <p style="margin-top: 20px">
+              <strong>효과:</strong> 플랫폼별 이슈(Mac/Win) 해결, PostgreSQL 설치 및 초기화 통일,
+              불필요한 질문 시간 감소
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 기타: 이미지 템플릿 -->
+    <div class="slide-container" id="slide8-1">
+      <h2 class="slide-title">스크린샷 : 더미데이터 생성 코드</h2>
+      <div class="content-area">
+        <div class="placeholder-wrapper">
+          <img src="images/seed.png" alt="더미데이터 코드 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 기타: 이미지 템플릿 -->
+    <div class="slide-container" id="slide8-2">
+      <h2 class="slide-title">스크린샷 : 그룹 테이블</h2>
+      <div class="content-area">
+        <div class="placeholder-wrapper">
+          <img src="images/db_group.png" alt="그룹 테이블 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 기타: 이미지 템플릿 -->
+    <div class="slide-container" id="slide8-3">
+      <h2 class="slide-title">스크린샷 : 참여자 테이블</h2>
+      <div class="content-area">
+        <div class="placeholder-wrapper">
+          <img src="images/db_participant.png" alt="참가자 테이블 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 기타: 이미지 템플릿 -->
+    <div class="slide-container" id="slide8-4">
+      <h2 class="slide-title">스크린샷 : 운동 기록 테이블</h2>
+      <div class="content-area">
+        <div class="placeholder-wrapper">
+          <img src="images/db_record.png" alt="운동 기록 테이블 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: 구현 과정의 어려움 (1) - DB 순환참조 문제 (Image_Right_Text_Left) -->
+    <div class="slide-container" id="slide9">
+      <h2 class="slide-title">구현 과정의 어려움 (1) - <span class="accent">DB 순환참조</span></h2>
       <div class="content-area">
         <div class="two-column">
           <div>
             <h3><span class="accent">⚠️</span> 발견된 문제</h3>
-            <p>Group과 GroupParticipant 테이블 간 순환참조 발생</p>
-            <h3 style="margin-top: 40px">문제 상황</h3>
+            <p>Group과 Participant 테이블 간의 상호 참조로 인한 '치킨-달걀' 문제 발생</p>
+            <h3 style="margin-top: 30px">문제 상황</h3>
             <ul>
-              <li><strong>Group:</strong> `groupLeaderId` (참여자) NOT NULL</li>
+              <li><strong>Group:</strong> `groupOwnerId` (참여자) NOT NULL</li>
+              <li><strong>Participant:</strong> `groupId` (그룹) NOT NULL</li>
               <li>
-                <strong>GroupParticipant:</strong> `groupId` (그룹) NOT NULL
+                그룹 생성 시 리더(참여자)가 필요하지만, 리더를 만들려면 그룹 ID가 필요한 순환 구조
               </li>
-              <li>그룹 생성과 동시에 리더를 참여자로 등록 불가</li>
             </ul>
-            <h3 style="margin-top: 40px">영향</h3>
-            <p>스키마 이해도 저하 및 개발 복잡도 증가</p>
+            <h3 style="margin-top: 30px">영향</h3>
+            <p>트랜잭션 복잡도 급증, 스키마 이해도 저하, 작업 속도 지연</p>
           </div>
           <div>
             <div class="placeholder-wrapper">
-              <span class="placeholder-text"
-                >📸 순환참조 다이어그램 (이미지 영역)</span
-              >
+              <span class="placeholder-text">
+                <img src="images/p9.png" alt="순환참조 DB 설명" />
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 7: DB 설계 - 해결 방안 -->
-    <div class="slide-container" id="slide7">
+    <!-- SLIDE 10: 구현 과정의 해결 방법 (1) - 제약 조건 완화 (Two_Column_Tiled_Text) -->
+    <div class="slide-container" id="slide10">
       <h2 class="slide-title">
-        DB 설계 - <span class="accent">해결 방안</span>
+        구현 과정의 해결 방법 (1) - <span class="accent">제약 조건 완화</span>
       </h2>
       <div class="content-area">
         <div class="two-column tiled">
           <div>
-            <h3><span class="accent">✅ 해결 방법</span>: 제약 조건 완화</h3>
-            <p>초급 프로젝트 특성을 고려, 복잡한 트랜잭션 대신 제약 완화</p>
-            <h3 style="margin-top: 30px">적용 변경사항</h3>
-            <ul>
-              <li>`ownerId`, `authorId` 등 참조 키를 Nullable로 변경</li>
-              <li>DB 제약 대신 API 레벨에서 비즈니스 로직 검증</li>
-              <li>중복값 등 주요 검증은 컨트롤러에서 수행</li>
-            </ul>
+            <h3><span class="accent">접근</span> 방식</h3>
+            <p>
+              초급 프로젝트의 특성과 2주의 짧은 기간을 고려, DB 제약보다
+              <span style="color: #fafafa; font-weight: 700">API 레벨에서의 검증</span>을 우선
+            </p>
+            <h3 style="margin-top: 30px">적용된 변경사항</h3>
+            <ol style="padding-left: 30px; font-size: 27px">
+              <li style="margin-bottom: 15px">Foreign Key를 Nullable로 변경 (`groupOwnerId?`)</li>
+              <li style="margin-bottom: 15px">API 컨트롤러 레벨에서 비즈니스 로직 검증 강화</li>
+              <li style="margin-bottom: 15px">복잡한 트랜잭션 대신 순차적 생성 로직 도입</li>
+            </ol>
           </div>
           <div>
-            <h3><span class="accent">✨</span> 장점</h3>
+            <h3><span class="accent">효과</span></h3>
             <ul>
-              <li>단순화된 로직으로 팀원 전체의 이해도 증진</li>
-              <li>복잡한 트랜잭션 처리 없이 빠른 개발 속도 확보</li>
-              <li>API 레벨에서 유연한 데이터 검증 로직 구현 가능</li>
+              <li>
+                <span style="color: #fafafa; font-weight: 700">✓ 팀원 이해 용이:</span> 로직이
+                단순해져 모두가 쉽게 이해
+              </li>
+              <li>
+                <span style="color: #fafafa; font-weight: 700">✓ 빠른 개발 속도:</span> 복잡성
+                제거로 개발 속도 향상
+              </li>
+              <li>
+                <span style="color: #fafafa; font-weight: 700">✓ 유연한 검증:</span> API에서 더
+                유연한 데이터 검증 가능
+              </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 8: 프로젝트 설정 & 컨벤션 -->
-    <div class="slide-container" id="slide8">
-      <h2 class="slide-title">프로젝트 설정 & 컨벤션</h2>
+    <!-- SLIDE 11: 구현 과정의 어려움 (2) - 배포 환경 대응 (Code) -->
+    <div class="slide-container" id="slide11">
+      <h2 class="slide-title">
+        구현 과정의 어려움 (2) - <span class="accent">배포 환경 대응</span>
+      </h2>
+      <div class="content-area" style="flex-direction: column; align-items: flex-start">
+        <h3>이미지 URL 저장 방식의 딜레마</h3>
+        <div class="two-column" style="gap: 40px; margin-top: 30px">
+          <div>
+            <p><strong>방법 1: 전체 URL 저장 (Bad)</strong></p>
+            <pre><code><span class="comment">// ❌ DB에 "http://localhost:3000/..." 저장</span>
+<span class="variable">imageUrl</span>: <span class="string">"http://localhost:3000/uploads/image123.jpg"</span>
+<span class="comment">// ❌ 환경 변경 시(dev, prod) DB 전체 수정 필요
+// ❌ CDN 도입 시 모든 레코드 업데이트</span></code></pre>
+          </div>
+          <div>
+            <p><strong>방법 2: 파일명만 저장 (So-so)</strong></p>
+            <pre><code><span class="comment">// ❓ DB에 "image123.jpg" 저장</span>
+<span class="variable">imageUrl</span>: <span class="string">"image123.jpg"</span>
+<span class="comment">// ❌ 경로 정보("/uploads/") 누락
+// ❌ API에서 경로 하드코딩 필요</span></code></pre>
+          </div>
+        </div>
+        <h3 style="margin-top: 30px">
+          우리의 선택: <span class="accent">상대 경로 + 환경변수 조합</span>
+        </h3>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: 구현 과정의 해결 방법 (2) - 이미지 업로드 시스템 (Image_Right_Text_Left) -->
+    <div class="slide-container" id="slide12">
+      <h2 class="slide-title">
+        구현 과정의 해결 방법 (2) - <span class="accent">환경 독립적 설계</span>
+      </h2>
       <div class="content-area">
         <div class="two-column">
           <div>
-            <h3>통일된 개발 환경</h3>
-            <ul>
-              <li>Prettier 설정 파일 공유로 일관된 코드 스타일</li>
-              <li>프로젝트 폴더 구조 가이드라인</li>
-              <li>환경 변수 템플릿 (.env.example) 제공</li>
-              <li>단계별 설정 가이드 문서 (README)</li>
-            </ul>
-            <h3 style="margin-top: 40px">코드 컨벤션</h3>
-            <ul>
-              <li>
-                <strong>파일명:</strong> kebab-case (예: `user-router.js`)
-              </li>
-              <li>
-                <strong>함수/변수명:</strong> camelCase (예: `getUserById`)
-              </li>
-              <li><strong>들여쓰기:</strong> 2 spaces</li>
-            </ul>
+            <h3><span class="accent">✅</span> 구현 방식</h3>
+            <p><strong>1. DB 저장 (상대 경로)</strong></p>
+            <pre><code style="font-size: 24px;"><span class="comment">// "/uploads/" 폴더 경로까지 포함해 저장</span>
+<span class="variable">imagePath</span>: <span class="string">"/uploads/image123.jpg"</span></code></pre>
+
+            <p style="margin-top: 20px"><strong>2. API 응답 (동적 생성)</strong></p>
+            <pre><code style="font-size: 24px;"><span class="comment">// 환경변수(BASE_URL)와 DB 경로 조합</span>
+<span class="keyword">const</span> <span class="variable">imageUrl</span> = <span class="string">`</span><span class="variable">${process.env.BASE_URL}</span><span class="string">${imagePath}</span><span class="string">`</span>;
+<span class="comment">// 로컬: "http://localhost:3000/uploads/..."
+// 운영: "https://api.seven.com/uploads/..."
+// CDN: "https://cdn.seven.com/uploads/..."</span></code></pre>
+
+            <h3 style="margin-top: 30px"><span class="accent">✨</span> 장점</h3>
+            <p>DB 수정 불필요, CDN 전환 용이, 데이터 이식성 극대화</p>
           </div>
           <div>
             <div class="placeholder-wrapper">
-              <span class="placeholder-text"
-                >📸 폴더 구조 / .env 예시 (이미지 영역)</span
-              >
+              <span class="placeholder-text">
+                <img src="images/p12.png" alt="이미지 업로드" />
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 9: 중앙화된 에러 핸들러 -->
-    <div class="slide-container" id="slide9">
-      <h2 class="slide-title">중앙화된 에러 핸들러</h2>
+    <!-- SLIDE 13: 구현 과정의 해결 방법 (3) - 중앙화된 에러 핸들러 (Image_Right_Text_Left) -->
+    <div class="slide-container" id="slide13">
+      <h2 class="slide-title">
+        구현 과정의 해결 방법 (3) - <span class="accent">중앙화된 에러 핸들러</span>
+      </h2>
       <div class="content-area">
         <div class="two-column">
           <div>
-            <h3>구현 특징</h3>
+            <h3>구현 배경</h3>
             <ul>
-              <li>모든 에러를 단일 미들웨어에서 처리</li>
-              <li>일관된 JSON 응답 형식 유지</li>
-              <li>Prisma 관련 에러 자동 변환</li>
+              <li>팀원별 상이한 에러 처리 방식, 일관성 없는 응답</li>
+              <li>Prisma 에러(P2002, P2025) 코드 해석의 어려움</li>
             </ul>
-            <h3 style="margin-top: 40px">처리 가능 에러</h3>
-            <p>
-              Validation, Unauthorized, Not Found, Conflict, Prisma Error,
-              Internal Server Error 등
-            </p>
-            <h3 style="margin-top: 40px">
-              <span class="accent">✨</span> 강점
-            </h3>
-            <p>
-              라우트 핸들러 내 중복 `try-catch` 코드 제거, 일관된 에러 메시지
-              제공
-            </p>
+            <h3 style="margin-top: 30px">구현 내용</h3>
+            <ul>
+              <li>커스텀 에러 클래스 (ValidationError, NotFoundError...)</li>
+              <li>Prisma 에러 자동 변환 (P2002 → ConflictError)</li>
+              <li>Global Error Handler가 모든 에러를 수신</li>
+              <li>일관된 JSON 응답 형식 반환</li>
+            </ul>
+            <h3 style="margin-top: 30px"><span class="accent">✨</span> 강점</h3>
+            <p>중복 `try-catch` 제거, 동일한 에러 처리, 프론트엔드 통합 용이</p>
           </div>
           <div>
             <div class="placeholder-wrapper">
               <span class="placeholder-text"
-                >📸 error-handler.js 코드 (이미지 영역)</span
-              >
+                ><img src="images/p13.png" alt="에러핸들러 이미지"
+              /></span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 10: Prisma 싱글톤 관리 -->
-    <div class="slide-container" id="slide10">
-      <h2 class="slide-title">Prisma 싱글톤 관리</h2>
+    <!-- SLIDE 14: 구현 과정의 해결 방법 (4) - Prisma 싱글톤 관리 (Image_Right_Text_Left) -->
+    <div class="slide-container" id="slide14">
+      <h2 class="slide-title">
+        구현 과정의 해결 방법 (4) - <span class="accent">Prisma 싱글톤</span>
+      </h2>
       <div class="content-area">
         <div class="two-column">
           <div>
@@ -814,257 +1167,206 @@
             <ul>
               <li>각 파일에서 `new PrismaClient()` 호출 시 DB 연결 과다</li>
               <li>개발 환경(Hot-reload)에서 연결 누수(Leak) 발생</li>
+              <li>PostgreSQL 연결 한도 초과 위험</li>
             </ul>
-            <h3 style="margin-top: 40px">해결 방법</h3>
-            <ul>
-              <li>`utils/prisma.js` 파일에 싱글톤 인스턴스 생성</li>
-              <li>개발 환경에서는 `global` 객체에 캐싱하여 재사용</li>
-            </ul>
-            <h3 style="margin-top: 40px">
-              <span class="accent">✨</span> 강점
-            </h3>
-            <p>DB 연결 최적화 및 Hot-reload 환경에서의 안정성 확보</p>
-          </div>
-          <div>
-            <div class="placeholder-wrapper">
-              <span class="placeholder-text"
-                >📸 prisma.js 싱글톤 코드 (이미지 영역)</span
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 11: 이미지 업로드 시스템 -->
-    <div class="slide-container" id="slide11">
-      <h2 class="slide-title">이미지 업로드 시스템</h2>
-      <div class="content-area">
-        <div class="two-column">
-          <div>
-            <h3>설계 철학</h3>
-            <p>배포 환경에 독립적인 유연한 URL 구조</p>
-            <h3 style="margin-top: 30px">구현 방식</h3>
-            <ul>
-              <li>DB: 폴더 + 파일명만 저장 (예: `/uploads/image123.jpg`)</li>
-              <li>API 응답: `BASE_URL` 환경변수로 동적 URL 생성</li>
-              <li style="list-style: none; padding-left: 10px; font-size: 24px">
-                (예: `http://localhost:3000` + `/uploads/image123.jpg`)
-              </li>
-            </ul>
-            <h3 style="margin-top: 30px">
-              <span class="accent">✨</span> 강점
-            </h3>
+            <h3 style="margin-top: 30px">해결 방법: <span class="accent">싱글톤 패턴</span></h3>
             <p>
-              환경 변경 시 DB 수정 불필요, 로컬/개발/운영 서버의 다른 도메인
-              유연 대응, CDN 전환 용이, 데이터 이식성 극대화
+              `utils/prisma.js`에서 단일 인스턴스를 생성하고, 개발 환경에서는 `global` 객체에
+              캐싱하여 Hot-reload 시에도 재사용
             </p>
+            <h3 style="margin-top: 30px"><span class="accent">✨</span> 강점</h3>
+            <p>DB 연결 최적화, Hot-reload 안정성 확보, 팀원 설정 불필요</p>
           </div>
           <div>
             <div class="placeholder-wrapper">
               <span class="placeholder-text"
-                >📸 URL 생성 로직 / .env 예시 (이미지 영역)</span
-              >
+                ><img src="images/p14.png" alt="Prisma 싱글톤 이미지"
+              /></span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 12: 개발 효율화 전략 -->
-    <div class="slide-container" id="slide12">
-      <h2 class="slide-title">개발 효율화 전략</h2>
+    <!-- SLIDE 15: 진행 중인 작업 및 이슈 (Two_Column_Tiled_Text) -->
+    <div class="slide-container" id="slide15">
+      <h2 class="slide-title">진행 중인 작업 및 이슈</h2>
       <div class="content-area">
         <div class="two-column tiled">
           <div>
-            <h3><span class="accent">더미데이터</span> 생성 (seed.js)</h3>
+            <h3><span class="accent">🔄</span> 현재 진행 중</h3>
             <ul>
-              <li>스크립트 실행으로 테스트 데이터 자동 생성</li>
-              <li>한글 prefix ([테스트], [샘플])로 식별 용이</li>
-              <li>그룹, 참가자, 기록 등 전체 연관 관계 구축</li>
-              <li>팀원 누구나 동일한 테스트 환경 확보</li>
+              <li><strong>PR 통합:</strong> 11개 완료 기능 통합 완료</li>
+              <li><strong>코드 리뷰:</strong> 교차 리뷰를 통한 코드 품질 개선</li>
+              <li><strong>최적화:</strong> 불필요한 코드 제거 및 응답 일관성 검증</li>
             </ul>
           </div>
           <div>
-            <h3><span class="accent">동일 환경</span> 구축 가이드</h3>
+            <h3><span class="accent">⚠️</span> 발견된 이슈 (해결 완료)</h3>
             <ul>
-              <li>단계별 설정 가이드 (README)</li>
-              <li>플랫폼별(Windows, Mac) 이슈 해결 방법 공유</li>
-              <li>PostgreSQL 설치 및 설정 가이드</li>
-              <li>검증 명령어 및 예상 출력 결과 제공</li>
+              <li>
+                <strong>DB 순환참조:</strong> <span style="color: #22c55e">→ 제약 완화로 해결</span>
+              </li>
+              <li>
+                <strong>이미지 경로:</strong>
+                <span style="color: #22c55e">→ 환경변수 방식으로 해결</span>
+              </li>
+              <li>
+                <strong>에러 처리:</strong>
+                <span style="color: #22c55e">→ Global Handler로 통일</span>
+              </li>
+              <li>
+                <strong>담당 작업:</strong>
+                <span style="color: #22c55e">→ 전원 완료 및 리뷰 반영</span>
+              </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 13: 현재 진행 상황 -->
-    <div class="slide-container" id="slide13">
-      <h2 class="slide-title">현재 진행 상황</h2>
-      <div
-        class="content-area"
-        style="flex-direction: column; align-items: flex-start; gap: 40px"
-      >
-        <div class="chart-container">
-          <div class="bar">
-            <div class="label">전체 진행도</div>
-            <div class="bar-inner">
-              <div class="bar-fill" style="width: 85%">85%</div>
+    <!-- SLIDE 16: 향후 계획 (Timeline) -->
+    <div class="slide-container" id="slide16">
+      <h2 class="slide-title">향후 계획 (이번 주 목표)</h2>
+      <div class="content-area">
+        <div class="timeline-layout">
+          <div class="timeline-line"></div>
+          <div class="timeline-item">
+            <div class="content-wrapper">
+              <h3>1. 통합</h3>
+              <p>Postman 통합 테스트<br />연계 기능 개발</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="content-wrapper">
+              <h3>2. 연동</h3>
+              <p>프론트엔드 연동<br />CORS 및 환경변수</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="content-wrapper">
+              <h3>3. 배포</h3>
+              <p>Render 통합 배포<br />DB 및 경로 검증</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="content-wrapper">
+              <h3>4. 발표</h3>
+              <p>시연 시나리오<br />발표 자료 보완</p>
             </div>
           </div>
         </div>
-        <div class="bullet-list" style="display: flex; gap: 60px; width: 100%">
-          <div style="flex: 1">
-            <h3 style="color: #22c55e">✅ 완료</h3>
-            <ul>
-              <li>
-                <i class="fa-solid fa-check" style="color: #22c55e"></i>
-                <p>12개 API 엔드포인트 중 대부분 구현</p>
-              </li>
-              <li>
-                <i class="fa-solid fa-check" style="color: #22c55e"></i>
-                <p>데이터베이스 스키마 확정 및 마이그레이션</p>
-              </li>
-              <li>
-                <i class="fa-solid fa-check" style="color: #22c55e"></i>
-                <p>공통 기능 (에러 핸들러, Prisma 유틸)</p>
-              </li>
-              <li>
-                <i class="fa-solid fa-check" style="color: #22c55e"></i>
-                <p>이미지 업로드 기능 / 더미데이터 스크립트</p>
-              </li>
-            </ul>
-          </div>
-          <div style="flex: 1">
-            <h3 style="color: #f59e0b">🔄 진행 중</h3>
-            <ul>
-              <li>
-                <i class="fa-solid fa-spinner" style="color: #f59e0b"></i>
-                <p>최종 PR 통합 및 코드 리뷰</p>
-              </li>
-              <li>
-                <i class="fa-solid fa-spinner" style="color: #f59e0b"></i>
-                <p>최종 코드 정리 및 리팩토링</p>
-              </li>
-            </ul>
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- SLIDE 14: 향후 계획 -->
-    <div class="slide-container" id="slide14">
-      <h2 class="slide-title">향후 계획</h2>
+    <!-- SLIDE 18: 우리 팀의 강점 (Tiled_Text_With_Icons - 6 tiles) -->
+    <div class="slide-container" id="slide18">
+      <h2 class="slide-title">우리 팀의 강점</h2>
       <div class="content-area">
-        <div class="bullet-list">
-          <ul>
-            <li>
-              <i class="fa-solid fa-code-pull-request accent"></i>
-              <div>
-                <strong>PR 통합 및 최종 테스트</strong>
-                <p>Postman을 사용한 API 엔드포인트 최종 검증</p>
-              </div>
-            </li>
-            <li>
-              <i class="fa-solid fa-desktop accent"></i>
-              <div>
-                <strong>프론트엔드 연동</strong>
-                <p>Next.js 정적 빌드 파일을 Express `public` 폴더로 제공</p>
-              </div>
-            </li>
-            <li>
-              <i class="fa-solid fa-vial-circle-check accent"></i>
-              <div>
-                <strong>통합 테스트</strong>
-                <p>프론트-백엔드 실제 동작 확인 및 버그 수정</p>
-              </div>
-            </li>
-            <li>
-              <i class="fa-solid fa-server accent"></i>
-              <div>
-                <strong>배포</strong>
-                <p>Render를 사용한 백엔드+프론트엔드 통합 서비스 배포</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 15: 좋았던 점 -->
-    <div class="slide-container" id="slide15">
-      <h2 class="slide-title">좋았던 점 (What Went Well)</h2>
-      <div class="content-area">
-        <div class="tiled-content">
+        <div class="tiled-content six-tiles">
           <div class="tile">
             <div class="icon"><i class="fa-solid fa-map-signs"></i></div>
             <h3>명확한 사전 설계</h3>
-            <p>API 명세서와 스키마를 먼저 정의하여 개발 목표가 뚜렷했습니다.</p>
+            <p>API 명세서와 DB 스키마 우선 완성</p>
           </div>
           <div class="tile">
             <div class="icon"><i class="fa-solid fa-cogs"></i></div>
-            <h3>공통 인프라 우선 구축</h3>
-            <p>
-              에러 핸들러, Prisma 유틸 등 공통 기능을 먼저 제공해 중복 작업을
-              방지했습니다.
-            </p>
+            <h3>공통 인프라 구축</h3>
+            <p>에러 핸들러, 유틸 등 공통 모듈 우선 제공</p>
           </div>
           <div class="tile">
             <div class="icon"><i class="fa-solid fa-balance-scale"></i></div>
             <h3>현실적 의사결정</h3>
-            <p>
-              팀 역량을 고려하여 순환참조 문제 등에서 실용적인 기술을
-              선택했습니다.
-            </p>
+            <p>완벽보다 '완성'에 집중 (DB 제약 완화)</p>
+          </div>
+          <div class="tile">
+            <div class="icon"><i class="fa-solid fa-server"></i></div>
+            <h3>배포 환경 독립성</h3>
+            <p>환경변수만으로 모든 환경(CDN 포함) 대응</p>
           </div>
           <div class="tile">
             <div class="icon"><i class="fa-solid fa-users-gear"></i></div>
             <h3>협업 환경 통일</h3>
-            <p>
-              상세한 가이드 문서를 통해 팀원 모두가 동일한 개발 환경을
-              구축했습니다.
-            </p>
+            <p>상세 가이드 및 더미데이터로 동일 환경</p>
+          </div>
+          <div class="tile">
+            <div class="icon"><i class="fa-solid fa-book-open-reader"></i></div>
+            <h3>실무 중심 코드 리뷰</h3>
+            <p>지적이 아닌 '설명' 중심의 리뷰 문화</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 16: Q&A -->
-    <div class="slide-container" id="slide16">
+    <!-- SLIDE 19: 배운 점과 느낀 점 (Two_Column_Tiled_Text) -->
+    <div class="slide-container" id="slide19">
+      <h2 class="slide-title">배운 점과 느낀 점</h2>
+      <div class="content-area">
+        <div class="two-column tiled">
+          <div>
+            <h3><span class="accent">기술적</span> 학습</h3>
+            <ul>
+              <li><strong>설계의 중요성:</strong> API 명세서가 소통 도구임을 체감</li>
+              <li><strong>실용적 선택:</strong> 이론적 완벽함보다 완성도가 중요</li>
+              <li><strong>재사용 설계:</strong> 싱글톤, 에러 핸들러의 효과</li>
+            </ul>
+          </div>
+          <div>
+            <h3><span class="accent">팀워크</span></h3>
+            <ul>
+              <li><strong>명확한 R&R:</strong> API 단위 분배가 효과적</li>
+              <li><strong>코드 리뷰 문화:</strong> 동료 피드백이 팀 역량 향상</li>
+              <li><strong>문서화의 힘:</strong> 상세 가이드가 질문 시간을 단축</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 20: Q&A -->
+    <div class="slide-container" id="slide20">
       <div class="qa-layout">
         <h2>감사합니다</h2>
-        <p>NB6-1팀 / Q&A</p>
+        <p>NB6기 1팀 / SEVEN - 운동 커뮤니티</p>
       </div>
     </div>
 
     <script>
       // --- 슬라이드 내비게이션 로직 ---
-      const slides = document.querySelectorAll(".slide-container");
-      const prevButton = document.getElementById("prev-slide");
-      const nextButton = document.getElementById("next-slide");
-      const slideCounter = document.getElementById("slide-counter");
-      const totalSlides = slides.length;
+      const slides = document.querySelectorAll('.slide-container');
+      const prevButton = document.getElementById('prev-slide');
+      const nextButton = document.getElementById('next-slide');
+      const slideCounter = document.getElementById('slide-counter');
+      const totalSlides = slides.length; // 20으로 자동 업데이트
       let currentSlide = 0;
 
       function showSlide(index) {
-        slides.forEach((slide) => slide.classList.remove("active"));
-        slides[index].classList.add("active");
+        slides.forEach((slide) => slide.classList.remove('active'));
+        slides[index].classList.add('active');
         slideCounter.textContent = `${index + 1} / ${totalSlides}`;
         prevButton.disabled = index === 0;
         nextButton.disabled = index === totalSlides - 1;
       }
 
-      nextButton.addEventListener("click", () => {
+      nextButton.addEventListener('click', () => {
         if (currentSlide < totalSlides - 1) showSlide(++currentSlide);
       });
-      prevButton.addEventListener("click", () => {
+      prevButton.addEventListener('click', () => {
         if (currentSlide > 0) showSlide(--currentSlide);
       });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight" || e.key === " ") {
+      document.addEventListener('keydown', (e) => {
+        // 입력 필드나 텍스트 영역에 포커스된 경우 키보드 이벤트 무시
+        if (
+          e.target.tagName === 'INPUT' ||
+          e.target.tagName === 'TEXTAREA' ||
+          e.target.isContentEditable
+        ) {
+          return;
+        }
+        if (e.key === 'ArrowRight' || e.key === ' ') {
           e.preventDefault();
           nextButton.click();
-        } else if (e.key === "ArrowLeft") {
+        } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
           prevButton.click();
         }
@@ -1074,7 +1376,7 @@
       let particles = [];
       function setup() {
         let canvas = createCanvas(windowWidth, windowHeight);
-        canvas.id("p5-canvas");
+        canvas.id('p5-canvas');
         for (let i = 0; i < 100; i++) particles.push(new Particle());
         noStroke();
       }
@@ -1113,4 +1415,3 @@
     </script>
   </body>
 </html>
-```
