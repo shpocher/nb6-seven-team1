@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 // UPLOAD_DIR: 절대 경로 public/uploads
 const UPLOAD_DIR = path.resolve(__dirname, '../../public/uploads');
 
-// 실제 파일 경로 + 확장자(ext) 검사
+// 실제 파일 경로 + 확장자(ext)
 const storage = multer.diskStorage({
   destination: UPLOAD_DIR,
   filename: (_req, file, cb) => {
