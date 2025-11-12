@@ -103,8 +103,20 @@ class RecordController {
 
       debugLog('응답 photos:', recordWithUrls.photos);
 
-      // API 명세에 맞는 응답 형식
-      res.status(201).json(recordWithUrls);
+      // API 명세에 맞는 응답 형식 (groupId, authorId 제외)
+      const response = {
+        id: recordWithUrls.id,
+        exerciseType: recordWithUrls.exerciseType,
+        description: recordWithUrls.description,
+        time: recordWithUrls.time,
+        distance: recordWithUrls.distance,
+        photos: recordWithUrls.photos,
+        author: recordWithUrls.author,
+        createdAt: recordWithUrls.createdAt,
+        updatedAt: recordWithUrls.updatedAt,
+      };
+
+      res.status(201).json(response);
     } catch (error) {
       // Global Error Handler로 전달
       next(error);
@@ -166,16 +178,35 @@ class RecordController {
       // DB: ["uploads/abc.jpg"] → 응답: ["http://localhost:3000/uploads/abc.jpg"]
       const recordsWithUrls = convertArrayImageFieldsToUrls(records, ['photos']);
 
-      res.status(200).json({
-        message: '운동 기록 목록 조회 성공',
-        data: recordsWithUrls,
-        pagination: {
+      // API 명세에 맞게 각 record에서 groupId, authorId 제거
+      const formattedRecords = recordsWithUrls.map((record) => ({
+        id: record.id,
+        exerciseType: record.exerciseType,
+        description: record.description,
+        time: record.time,
+        distance: record.distance,
+        photos: record.photos,
+        author: record.author,
+        createdAt: record.createdAt,
+        updatedAt: record.updatedAt,
+      }));
+
+      // API 명세서 기본 응답: { data: [...], total: 0 }
+      const response = {
+        data: formattedRecords,
+        total,
+      };
+
+      // 페이지네이션 파라미터가 있으면 pagination 정보 추가
+      if (req.query.page || req.query.limit) {
+        response.pagination = {
           page,
           limit,
-          total,
           totalPages: Math.ceil(total / limit),
-        },
-      });
+        };
+      }
+
+      res.status(200).json(response);
     } catch (error) {
       // Global Error Handler로 전달
       next(error);
@@ -220,8 +251,20 @@ class RecordController {
 
       debugLog('응답 photos:', recordWithUrls.photos);
 
-      // API 명세에 맞는 응답 형식
-      res.status(200).json(recordWithUrls);
+      // API 명세에 맞는 응답 형식 (groupId, authorId 제외)
+      const response = {
+        id: recordWithUrls.id,
+        exerciseType: recordWithUrls.exerciseType,
+        description: recordWithUrls.description,
+        time: recordWithUrls.time,
+        distance: recordWithUrls.distance,
+        photos: recordWithUrls.photos,
+        author: recordWithUrls.author,
+        createdAt: recordWithUrls.createdAt,
+        updatedAt: recordWithUrls.updatedAt,
+      };
+
+      res.status(200).json(response);
     } catch (error) {
       // Global Error Handler로 전달
       next(error);
