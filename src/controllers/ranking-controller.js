@@ -3,6 +3,7 @@ import prisma from '../utils/prisma.js';
 import { NotFoundError, ValidationError } from '../middlewares/error-handler.js';
 import { getRange } from '../utils/date-range.js';
 import { debugLog } from '../utils/debug.js';
+
 const MAX_RANKING_SIZE = 10; // SH : 최대 랭킹 크기 상수 정의 (추후 변경 용이)
 
 class RankingController {

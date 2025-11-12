@@ -36,12 +36,10 @@ class RecordController {
 
     try {
       // 1. 참여자 확인 및 검증
-      const author = await prisma.participant.findUnique({
+      const author = await prisma.participant.findFirst({
         where: {
-          unique_nickname_per_group: {
-            groupId,
-            nickname: authorNickname,
-          },
+          groupId,
+          nickname: authorNickname,
         },
       });
 
