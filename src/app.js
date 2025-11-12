@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { debugLog } from './utils/debug.js';
+import cors from 'cors';
 
 // ============================================
 // 미들웨어 import
@@ -19,6 +20,7 @@ import groupLikeCount from './routes/group-like-count-routes.js';
 import rankingRoutes from './routes/ranking-routes.js';
 import recordRoutes from './routes/record-routes.js';
 import groupRoutes from './routes/group-routes.js';
+
 // ============================================
 // 환경 변수 설정
 // ============================================
@@ -40,6 +42,9 @@ const app = express();
 // ============================================
 // 미들웨어 설정
 // ============================================
+
+// ⭐ CORS 설정 (가장 먼저 추가!)
+app.use(cors());
 
 // JSON 파싱
 app.use(express.json());
