@@ -19,10 +19,6 @@ export function validateRecordCreate(req, res, next) {
     );
   }
 
-  if (!description) {
-    return next(new ValidationError('description', '설명은 필수입니다'));
-  }
-
   if (time === undefined || time === null) {
     return next(new ValidationError('time', '운동 시간은 필수입니다'));
   }
