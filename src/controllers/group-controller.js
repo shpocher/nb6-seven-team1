@@ -70,17 +70,43 @@ class GroupController {
         throw new ValidationError('목표 횟수는 0 이상의 수여야 합니다.');
       }
 
+      // 김지선 : PostMan OwnerID 값 형변환 추가
+      const ownerId = parseInt(req.body.ownerId);
       if (!req.body.ownerId) {
         throw new ValidationError('소유자의 id가 없거나 인식되지 않았습니다.');
       }
 
-      const [photoUrl] = req.body.photoUrl;
+      // 이미지 관련 추가 작업 start
 
-      console.log([photoUrl]);
+      // 1. multer 작업 받아오기
+      const mainImgs = req.files;
+      const baseUrl = process.env.BASE_URL || '';
+
+      if (!mainImgs || mainImgs.length === 0) {
+        return res.status(400).json({ message: '이미지가 필요합니다.' });
+      }
+
+      // 2. URL 변환하기
+      const imgUrls = mainImgs.map((url) => `${baseUrl}/uploads/${url.filename}`);
+
+      // 3) 최종 photo 값(단일이면 string, 다중이면 array) — 이름 충돌 피하려고 별도 변수명
+      const finalPhotoUrl = imgUrls.length === 1 ? imgUrls[0] : imgUrls;
+      const { photoUrl: _ignore, ...body } = req.body;
 
       const group = await prisma.group.create({
-        data: req.body,
+        data: {
+          ...body,
+          goalRep,
+          ownerId,
+          photoUrl: finalPhotoUrl,
+        },
       });
+      // 이미지 관련 추가 작업 End
+
+      // 기존 create code
+      // const group = await prisma.group.create({
+      //   data: req.body,
+      // });
 
       debugLog('group 생성 완료', group);
 
