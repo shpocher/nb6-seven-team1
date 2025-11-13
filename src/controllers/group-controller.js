@@ -61,24 +61,27 @@ class GroupController {
   //group 데이터 추가
   async createGroup(req, res, next) {
     try {
-      if (!req.body.name) {
+      // ==== 이미지 관련 추가 작업 start / 김지선 ====
+      // 1. 이미지 URL 덮어쓰기 방지 및 validation 진행 한 값 분리
+      const { name, goalRep, ownerId, photoUrl, ...body } = req.body;
+
+      // 2. 검증 작업 단순화
+      if (!name) {
         throw new ValidationError('그룹명은 필수입니다');
       }
 
-      const goalRep = parseInt(req.body.goalRep);
-      if (!Number.isInteger(req.body.goalRep) || goalRep <= 0) {
+      const finalGoalRep = parseInt(req.body.goalRep);
+      if (!Number.isInteger(finalGoalRep) || finalGoalRep <= 0) {
         throw new ValidationError('목표 횟수는 0 이상의 수여야 합니다.');
       }
 
-      // 김지선 : PostMan OwnerID 값 형변환 추가
-      const ownerId = parseInt(req.body.ownerId);
-      if (!req.body.ownerId) {
+      const finalOwnerId = parseInt(req.body.ownerId);
+      if (!finalOwnerId) {
+        console.log(finalOwnerId);
         throw new ValidationError('소유자의 id가 없거나 인식되지 않았습니다.');
       }
 
-      // 이미지 관련 추가 작업 start
-
-      // 1. multer 작업 받아오기
+      // 3. multer 파일 받아오기
       const mainImgs = req.files;
       const baseUrl = process.env.BASE_URL || '';
 
@@ -86,24 +89,36 @@ class GroupController {
         return res.status(400).json({ message: '이미지가 필요합니다.' });
       }
 
-      // 2. URL 변환하기
+      // 4. 전달 받은 URL 변환하기
       const imgUrls = mainImgs.map((url) => `${baseUrl}/uploads/${url.filename}`);
 
-      // 3) 최종 photo 값(단일이면 string, 다중이면 array) — 이름 충돌 피하려고 별도 변수명
+      // 5. 최종 photo 값(단일이면 string, 다중이면 array의 첫번쨰 값 가져옴
       const finalPhotoUrl = imgUrls.length === 1 ? imgUrls[0] : imgUrls;
-      const { photoUrl: _ignore, ...body } = req.body;
 
       const group = await prisma.group.create({
         data: {
           ...body,
-          goalRep,
-          ownerId,
+          name,
+          goalRep: finalGoalRep,
+          ownerId: finalOwnerId,
           photoUrl: finalPhotoUrl,
         },
       });
-      // 이미지 관련 추가 작업 End
+      // ==== 이미지 관련 추가 작업 End ====
 
-      // 기존 create code
+      // ==== 기존 create code 백업 ====
+      // if (!req.body.name) {
+      //   throw new ValidationError('그룹명은 필수입니다');
+      // }
+
+      // const goalRep = parseInt(req.body.goalRep);
+      // if (!Number.isInteger(req.body.goalRep) || goalRep <= 0) {
+      //   throw new ValidationError('목표 횟수는 0 이상의 수여야 합니다.');
+      // }
+
+      // if (!req.body.ownerId) {
+      //   throw new ValidationError('소유자의 id가 없거나 인식되지 않았습니다.');
+      // }
       // const group = await prisma.group.create({
       //   data: req.body,
       // });
