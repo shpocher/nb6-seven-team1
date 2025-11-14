@@ -83,17 +83,12 @@ class GroupController {
 
       // 3. multer 파일 받아오기
       const mainImgs = req.files;
-      const baseUrl = process.env.BASE_URL || '';
-
-      if (!mainImgs || mainImgs.length === 0) {
-        return res.status(400).json({ message: '이미지가 필요합니다.' });
-      }
 
       // 4. 전달 받은 URL 변환하기
-      const imgUrls = mainImgs.map((url) => `${baseUrl}/uploads/${url.filename}`);
+      const imgUrls = mainImgs.map((url) => `/uploads/${url.filename}`);
 
       // 5. 최종 photo 값(단일이면 string, 다중이면 array의 첫번쨰 값 가져옴
-      const finalPhotoUrl = imgUrls.length === 1 ? imgUrls[0] : imgUrls;
+      const finalPhotoUrl = imgUrls.length > 0 ? imgUrls[0] : null;
 
       const group = await prisma.group.create({
         data: {
@@ -105,23 +100,6 @@ class GroupController {
         },
       });
       // ==== 이미지 관련 추가 작업 End ====
-
-      // ==== 기존 create code 백업 ====
-      // if (!req.body.name) {
-      //   throw new ValidationError('그룹명은 필수입니다');
-      // }
-
-      // const goalRep = parseInt(req.body.goalRep);
-      // if (!Number.isInteger(req.body.goalRep) || goalRep <= 0) {
-      //   throw new ValidationError('목표 횟수는 0 이상의 수여야 합니다.');
-      // }
-
-      // if (!req.body.ownerId) {
-      //   throw new ValidationError('소유자의 id가 없거나 인식되지 않았습니다.');
-      // }
-      // const group = await prisma.group.create({
-      //   data: req.body,
-      // });
 
       debugLog('group 생성 완료', group);
 
