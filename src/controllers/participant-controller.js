@@ -6,6 +6,7 @@ import {
   NotFoundError,
   ValidationError,
 } from '../middlewares/error-handler.js';
+import { updateGroupBadges } from './badge-controller.js';
 
 class ParticipantController {
   async createParticipant(req, res, next) {
@@ -42,6 +43,10 @@ class ParticipantController {
       const participants = await prisma.participant.create({
         data: { nickname, password, groupId: Number(groupId) },
       });
+
+      //참여자 뱃지 가능 여부 확인
+      await updateGroupBadges(groupId);
+
       //응답 구조 생성
       const responseData = {
         ...group,
@@ -106,6 +111,9 @@ class ParticipantController {
       await prisma.participant.delete({
         where: { id: participant.id },
       });
+      //참여자 뱃지 가능 여부 확인
+      await updateGroupBadges(groupId);
+
       res.sendStatus(204);
     } catch (error) {
       debugError('참여자 탈퇴 실패:', error);
