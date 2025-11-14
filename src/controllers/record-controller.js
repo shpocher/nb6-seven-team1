@@ -6,6 +6,7 @@ import {
   convertImageFieldsToUrls,
   convertArrayImageFieldsToUrls,
 } from '../utils/image-utils.js';
+import { sendChangeRecordMsg } from '../utils/discord-msg-utils.js';
 
 /**
  * 운동 기록 컨트롤러
@@ -89,8 +90,10 @@ class RecordController {
         where: { id: groupId },
       });
 
+      //주의. seed data에는 webhook URL이 null로 되어있음
+      //테스트를 하려면 sendChangeRecordMsg 함수를 if문 밖으로 내놓고, 함수내의 주석대로 코드 일부 활성화 및 비활성화 필요
       if (group?.discordWebhookUrl) {
-        // TODO: 디스코드 웹훅 전송 로직 구현 (추후 구현)
+        sendChangeRecordMsg(group, record);
         debugLog('디스코드 웹훅 URL:', group.discordWebhookUrl);
       }
 

@@ -18,7 +18,7 @@ node --version
 ## STEP1 : (git 작업) 현재 작업 저장
 
 ```
-# 현재 작업중인 브랜치에서 작업 내용 커밋 (예시 브랜치명:sanghwi-api)
+# 현재 작업중인 브랜치에서 작업 내용 커 밋 (예시 브랜치명:sanghwi-api)
 
 git add .
 git commit -m "wip: sanghwi api 작업 중"
