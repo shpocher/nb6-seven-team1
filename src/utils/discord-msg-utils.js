@@ -1,5 +1,3 @@
-import { debugError } from './debug.js';
-
 export async function sendChangeRecordMsg(record) {
   const discordURL =
     'https://discord.com/api/webhooks/1435533418145255516/2nIZI1jChcPZHGuAMbZOZ2DK4lJ5EwyF1-YHZMD7hM62yAai0L39obMkae_y8fj425uD';
