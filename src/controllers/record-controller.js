@@ -85,17 +85,20 @@ class RecordController {
       debugLog('운동 기록 생성 완료:', record.id);
       debugLog('DB에 저장된 photos:', record.photos);
 
-      // 4. 디스코드 웹훅 전송 (비동기, 실패해도 무시)
+      // 4. 디스코드 웹훅 전송
+      //utils폴더 내 discord-msg-utils.js의 함수에서 webhook 처리
+      sendChangeRecordMsg(record);
+
+      //아래 부분은 group에 webHookURL이 들어갈 때 활성화 및 수정
+      /*
       const group = await prisma.group.findUnique({
         where: { id: groupId },
       });
 
-      //주의. seed data에는 webhook URL이 null로 되어있음
-      //테스트를 하려면 sendChangeRecordMsg 함수를 if문 밖으로 내놓고, 함수내의 주석대로 코드 일부 활성화 및 비활성화 필요
       if (group?.discordWebhookUrl) {
-        sendChangeRecordMsg(group, record);
         debugLog('디스코드 웹훅 URL:', group.discordWebhookUrl);
       }
+      */
 
       // 5. 배지 업데이트 (추후 구현)
       // await updateGroupBadges(groupId);
