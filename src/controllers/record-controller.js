@@ -6,7 +6,7 @@ import {
   convertImageFieldsToUrls,
   convertArrayImageFieldsToUrls,
 } from '../utils/image-utils.js';
-import { updateGroupBaddges } from './badge-controller.js';
+import { updateGroupBadges } from './badge-controller.js';
 
 /**
  * 운동 기록 컨트롤러
@@ -96,7 +96,7 @@ class RecordController {
       }
 
       // 5. 배지 업데이트 (추후 구현)
-      await updateGroupBaddges(groupId);
+      await updateGroupBadges(groupId);
 
       // 6. 응답: 경로를 다시 전체 URL로 변환 (공통 유틸리티 사용)
       // ["uploads/abc.jpg"] → ["http://localhost:3000/uploads/abc.jpg"]

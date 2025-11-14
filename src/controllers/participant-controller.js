@@ -6,7 +6,7 @@ import {
   NotFoundError,
   ValidationError,
 } from '../middlewares/error-handler.js';
-import { updateGroupBaddges } from './badge-controller.js';
+import { updateGroupBadges } from './badge-controller.js';
 
 class ParticipantController {
   async createParticipant(req, res, next) {
@@ -45,7 +45,7 @@ class ParticipantController {
       });
 
       //참여자 뱃지 가능 여부 확인
-      await updateGroupBaddges(groupId);
+      await updateGroupBadges(groupId);
 
       //응답 구조 생성
       const responseData = {
@@ -112,7 +112,7 @@ class ParticipantController {
         where: { id: participant.id },
       });
       //참여자 뱃지 가능 여부 확인
-      await updateGroupBaddges(groupId);
+      await updateGroupBadges(groupId);
 
       res.sendStatus(204);
     } catch (error) {

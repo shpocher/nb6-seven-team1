@@ -1,6 +1,6 @@
 import prisma from '../utils/prisma.js';
 import { NotFoundError } from '../middlewares/error-handler.js';
-import { updateGroupBaddges } from './badge-controller.js';
+import { updateGroupBadges } from './badge-controller.js';
 
 class GroupLikeCount {
   async groupLikeCountUp(req, res, next) {
@@ -23,7 +23,7 @@ class GroupLikeCount {
       });
 
       //좋아요 뱃지 가능 여부 확인
-      await updateGroupBaddges(groupId);
+      await updateGroupBadges(groupId);
 
       res.status(200).json({
         message: '그룹 추천 성공',
@@ -60,7 +60,7 @@ class GroupLikeCount {
         },
       });
       //좋아요 뱃지 가능 여부 확인
-      await updateGroupBaddges(groupId);
+      await updateGroupBadges(groupId);
 
       res.status(200).json({
         message: '그룹 추천 취소 성공',
