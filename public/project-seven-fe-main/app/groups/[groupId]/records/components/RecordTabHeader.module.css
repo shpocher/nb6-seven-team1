@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  height: 42px;
+}
+
+.total {
+  align-self: center;
+}
+
+.search {
+  height: 100%;
+}
+
+.orderBy {
+  height: 100%;
+}

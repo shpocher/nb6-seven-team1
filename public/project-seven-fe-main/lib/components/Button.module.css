@@ -1,0 +1,50 @@
+.button {
+  padding: 12px 24px;
+  color: var(--gray-50);
+  background-color: var(--black-400);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button.link {
+  text-decoration: none;
+}
+
+.button.small {
+  padding: 4px 12px;
+  font-size: 16px;
+}
+
+.button:hover {
+  background-color: var(--black-500);
+}
+
+.button:disabled {
+  background-color: var(--gray-400);
+  cursor: not-allowed;
+}
+
+.button:disabled:hover,
+.button:disabled:focus,
+.button:disabled:active {
+  background-color: var(--gray-400);
+}
+
+.button.minimal {
+  background-color: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  color: var(--black-400);
+}
+
+.button.minimal:hover,
+.button.minimal:focus,
+.button.minimal:active {
+  background-color: var(--gray-50);
+  border-color: var(--gray-300);
+}

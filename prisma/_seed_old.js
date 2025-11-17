@@ -277,31 +277,17 @@ async function main() {
       discordInviteUrl: null,
       likeCount: 0,
       badges: [],
-      ownerId: null, // 나중에 설정
+      ownerId: null, // owner 없는 그룹 (테스트용)
     },
   });
 
-  // Group 5에 owner 추가
-  const participants5 = await prisma.participant.create({
-    data: {
-      nickname: '[샘플] 신규그룹장',
-      password: '1234',
-      groupId: group5.id,
-    },
-  });
-
-  await prisma.group.update({
-    where: { id: group5.id },
-    data: { ownerId: participants5.id },
-  });
-
-  console.log('[OK] Group 5 created (1 participant, no records)');
+  console.log('[OK] Group 5 created (empty group)');
   console.log('');
   console.log('='.repeat(60));
   console.log('>>> SEED DATA GENERATION COMPLETE');
   console.log('--- Summary:');
   console.log('    5 groups created');
-  console.log('    26 participants created');
+  console.log('    25 participants created');
   console.log('    158 exercise records created');
   console.log('='.repeat(60));
 }
