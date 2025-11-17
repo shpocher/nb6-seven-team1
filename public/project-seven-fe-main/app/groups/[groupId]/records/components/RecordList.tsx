@@ -44,8 +44,18 @@ const RecordList = ({
     } finally {
       setIsLoading(false);
     }
-    setRecords((prev) => [...prev, ...next]);
-    setPage(page + 1);
+    setRecords((prev) => {
+      const seen = new Set(prev.map((item) => item.id));
+      const merged = [...prev];
+      next.forEach((record) => {
+        if (!seen.has(record.id)) {
+          merged.push(record);
+          seen.add(record.id);
+        }
+      });
+      return merged;
+    });
+    setPage((prev) => prev + 1);
   }, [groupId, initialQuery, page, hasNext, isLoading]);
 
   useEffect(() => {
