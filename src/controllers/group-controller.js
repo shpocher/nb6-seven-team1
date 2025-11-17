@@ -6,22 +6,28 @@ class GroupController {
   //group 데이터 목록 조회
   async getGroupList(req, res, next) {
     try {
+      // SH 수정: order→orderBy, sort→order, name→search
       const { page = 1, limit = 10, orderBy = 'createdAt', order = 'desc', search } = req.query;
 
+      // SH 수정: sort→order
       // order 검증 (명세서에서는 order가 정렬 방향)
       if (order !== 'asc' && order !== 'desc') {
         throw new ValidationError('order', 'order는 반드시 [asc, desc] 중 하나여야 합니다.');
       }
 
+      // SH 수정: 변수명 변경: orderBy → orderByClause (파라미터와 혼동 방지)
+      let orderByClause;
+
+      // SH 수정: 수정: order→orderBy
       switch (orderBy) {
         case 'participantCount':
-          orderBy = { participants: { _count: order } };
+          orderByClause = { participants: { _count: order } }; // SH 수정:  sort→order
           break;
         case 'likeCount':
-          orderBy = { likeCount: order };
+          orderByClause = { likeCount: order }; // SH 수정:  sort→order
           break;
         case 'createdAt':
-          orderBy = { createdAt: order };
+          orderByClause = { createdAt: order }; // SH 수정:  sort→order
           break;
         default:
           throw new ValidationError(
@@ -33,12 +39,12 @@ class GroupController {
       // 전체 개수 조회 추가 (total을 위해)
       const [groups, total] = await Promise.all([
         prisma.group.findMany({
-          orderBy,
+          orderBy: orderByClause, // 변수명 변경
           skip: (page - 1) * limit,
           take: parseInt(limit),
           where: {
             name: {
-              contains: search,
+              contains: search, // 수정: name→search
               mode: 'insensitive',
             },
           },
@@ -64,7 +70,7 @@ class GroupController {
         prisma.group.count({
           where: {
             name: {
-              contains: search,
+              contains: search, // SH 수정:  name→search
               mode: 'insensitive',
             },
           },
@@ -104,7 +110,7 @@ class GroupController {
 
       // 1. 필수 필드 검증
       if (!name) {
-        throw new ValidationError('name', '그룹명은 필수입니다');
+        throw new ValidationError('name', '그룹명은 필수입니다'); // path 추가
       }
 
       if (!ownerNickname) {
@@ -125,20 +131,33 @@ class GroupController {
       const finalPhotoUrl =
         mainImgs && mainImgs.length > 0 ? `uploads/${mainImgs[0].filename}` : null;
 
-      // 3. Owner(Participant) 생성과 함께 Group 생성
+      // 3. Group 먼저 생성 (ownerId는 null로 시작)
       const group = await prisma.group.create({
         data: {
           ...body,
           name,
           goalRep: finalGoalRep,
           photoUrl: finalPhotoUrl,
-          owner: {
-            create: {
-              nickname: ownerNickname,
-              password: ownerPassword,
-            },
-          },
         },
+      });
+
+      debugLog('group 생성 완료', group);
+
+      // 4. Owner(Participant) 생성하고 Group에 연결
+      const owner = await prisma.participant.create({
+        data: {
+          nickname: ownerNickname,
+          password: ownerPassword,
+          groupId: group.id,
+        },
+      });
+
+      debugLog('owner 생성 완료', owner);
+
+      // 5. Group의 ownerId 업데이트
+      const updatedGroup = await prisma.group.update({
+        where: { id: group.id },
+        data: { ownerId: owner.id },
         include: {
           owner: {
             select: {
@@ -159,25 +178,25 @@ class GroupController {
         },
       });
 
-      debugLog('group 생성 완료', group);
+      debugLog('group 업데이트 완료', updatedGroup);
 
-      // 4. 응답 데이터 생성
+      // SH 수정: 6. 응답 데이터 생성 (API 명세서대로 반환)
       const baseUrl = process.env.BASE_URL || '';
       const groupResponse = {
-        id: group.id,
-        name: group.name,
-        description: group.description,
-        photoUrl: group.photoUrl ? `${baseUrl}/${group.photoUrl}` : null,
-        goalRep: group.goalRep,
-        discordWebhookUrl: group.discordWebhookUrl,
-        discordInviteUrl: group.discordInviteUrl,
-        likeCount: group.likeCount,
-        tags: group.tags,
-        owner: group.owner,
-        participants: group.participants,
-        createdAt: group.createdAt,
-        updatedAt: group.updatedAt,
-        badges: group.badges,
+        id: updatedGroup.id,
+        name: updatedGroup.name,
+        description: updatedGroup.description,
+        photoUrl: updatedGroup.photoUrl ? `${baseUrl}/${updatedGroup.photoUrl}` : null,
+        goalRep: updatedGroup.goalRep,
+        discordWebhookUrl: updatedGroup.discordWebhookUrl,
+        discordInviteUrl: updatedGroup.discordInviteUrl,
+        likeCount: updatedGroup.likeCount,
+        tags: updatedGroup.tags,
+        owner: updatedGroup.owner,
+        participants: updatedGroup.participants,
+        createdAt: updatedGroup.createdAt,
+        updatedAt: updatedGroup.updatedAt,
+        badges: updatedGroup.badges,
       };
 
       res.status(201).json(groupResponse);
@@ -237,7 +256,7 @@ class GroupController {
   async deleteGroup(req, res, next) {
     try {
       const { id } = req.params;
-      const { ownerPassword } = req.body; // ✅ pw → ownerPassword
+      const { ownerPassword } = req.body; // pw -> ownerPassword로 변경
 
       const group = await prisma.group.findUnique({
         where: { id: Number(id) },
@@ -261,7 +280,7 @@ class GroupController {
       const ownerPasswordFromDB = group.owner.password;
 
       if (ownerPassword !== ownerPasswordFromDB) {
-        throw new UnauthorizedError('password', '비밀번호가 일치하지 않습니다.'); // ✅ path 추가
+        throw new UnauthorizedError('password', '비밀번호가 일치하지 않습니다.'); // path 추가
       }
 
       await prisma.group.delete({
@@ -278,7 +297,7 @@ class GroupController {
   async patchGroup(req, res, next) {
     try {
       const { id } = req.params;
-      const { ownerPassword, ...updateData } = req.body; // ✅ pw → ownerPassword
+      const { ownerPassword, ...updateData } = req.body; // pw -> ownerPassword로 변경
       let dataToUpdate = { ...updateData };
 
       const findGroup = await prisma.group.findUnique({
@@ -303,17 +322,16 @@ class GroupController {
       const ownerPasswordFromDB = findGroup.owner.password;
 
       if (ownerPassword !== ownerPasswordFromDB) {
-        throw new UnauthorizedError('password', '비밀번호가 일치하지 않습니다.'); // ✅ path 추가
+        throw new UnauthorizedError('password', '비밀번호가 일치하지 않습니다.'); // path 추가
       }
 
       if (!updateData.name) {
-        throw new ValidationError('name', '그룹명은 필수입니다'); // ✅ path 추가
+        throw new ValidationError('name', '그룹명은 필수입니다'); // path 추가
       }
 
-      // console.log 제거
       dataToUpdate.goalRep = parseInt(updateData.goalRep);
       if (!Number.isInteger(dataToUpdate.goalRep) || dataToUpdate.goalRep < 0) {
-        throw new ValidationError('goalRep', '목표 횟수는 0 이상의 정수여야 합니다'); // ✅ 수정
+        throw new ValidationError('goalRep', '목표 횟수는 0 이상의 정수여야 합니다'); // path 추가
       }
 
       // 미들웨어를 사용하여 이미지 파일 받아오기
