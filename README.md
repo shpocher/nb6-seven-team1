@@ -10,142 +10,167 @@
 
 ## 👥 팀원 구성
 
-| 이름   | 역할                                 | Github                            |
-| ------ | ------------------------------------ | --------------------------------- |
-| 이호성 | 소셜 로그인 / 회원 추가 정보 API     | [웨인 Github](개인 Github 링크)   |
-| 김지선 | 권한 관리 / 반응형 레이아웃 API      | [제이든 Github](개인 Github 링크) |
-| 나영준 | 수강생 정보 관리 / 공용 Button API   | [마크 Github](개인 Github 링크)   |
-| 이상휘 | 관리자 API / 회원관리 슬라이더       | [데이지 Github](개인 Github 링크) |
-| 이지민 | 학생 시간 정보 관리 / 공용 Modal API | [제이 Github](개인 Github 링크)   |
-| 정동원 | 학생 시간 정보 관리 / 공용 Modal API | [제이 Github](개인 Github 링크)   |
+| 이름   | 역할 (1차)                                    | 역할 (2차)               | Github                                            |
+| ------ | --------------------------------------------- | ------------------------ | ------------------------------------------------- |
+| 이호성 | 이미지 업로드 API (with multer) 작업          | Postman 전체 API 검증    | [이호성 Github](https://github.com/Leon97-dev)    |
+| 김지선 | 그룹 추천 API (Create, Delete) 작업           | 이미지 업로드 기능 적용  | [김지선 Github](https://github.com/KimDay366)     |
+| 나영준 | 참여자 API (Create, Delete) 작업              | 그룹 배지 기능 추가 구현 | [나영준 Github](https://github.com/YeongJun01)    |
+| 이상휘 | 전체 프로젝트 관리, 운동 기록 API (CRUD) 작업 | 전체 프로젝트 관리       | [이상휘 Github](https://github.com/shpocher)      |
+| 이지민 | 랭킹 API (Read) 작업                          | 전체 코드 및 로직 확인   | [이지민 Github](https://github.com/truely00-beep) |
+| 정동원 | 그룹 API (CRUD) 작업                          | 디스코드 웹훅 기능 추가  | [정동원 Github](https://github.com/tunajjang)     |
 
 ---
 
 ## 🧩 프로젝트 소개
 
 **목표:**  
-프로그래밍 교육 사이트의 **백엔드 시스템 구축**을 통해 회원 관리, 권한 제어, 강의 정보 관리 등 핵심 기능을 구현합니다.
+운동 인증 커뮤니티 서비스(SEVEN)의 **백엔드 시스템 구축**을 통해 그룹, 참여자, 운동 기록 등 핵심 기능을 구현합니다.
 
 **주요 기능:**
 
-- 소셜 로그인 (Google OAuth)
-- 회원 권한별 접근 제어
-- 수강생 및 관리자 정보 관리
-- 실시간 접속 및 시간 정보 관리
+- 그룹 생성, 삭제, 수정, 조회
+- 그룹 좋아요, 뱃지 기능 구현
+- 그룹에 참여자 등록
+- 그룹에 운동 기록 생성, 조회
+- 그룹 내 운동 기록 랭킹 조회
 
 ---
 
 ## 🛠️ 기술 스택
 
-| 구분          | 기술                   |
-| ------------- | ---------------------- |
-| **Backend**   | Express.js, Prisma ORM |
-| **Database**  | MongoDB                |
-| **공통 Tool** | Git & Github, Discord  |
+| 구분          | 기술                          |
+| ------------- | ----------------------------- |
+| **Backend**   | Express.js, Prisma ORM        |
+| **Database**  | Postgrsql                     |
+| **공통 Tool** | Git & Github, Discord, Notion |
 
 ---
 
 ## 🧑‍💻 팀원별 구현 기능
 
-### 웨인
+### 이호성
 
 > ![웨인 작업 이미지](첨부 이미지 또는 gif 파일 경로)
 
-- **소셜 로그인 API**
-  - Google OAuth 2.0 기반 로그인 기능 구현
-  - 로그인 후 추가 정보 입력을 위한 API 엔드포인트 개발
-- **회원 추가 정보 입력 API**
-  - 회원 유형(관리자 / 학생)에 따른 조건부 입력 처리 API 구현
+- **이미지 업로드 API**
+
+  - multer 활용해 이미지 업로드 구현
+
+- **Postman 전체 API 검증**
+  - Postman 활용해 전체적인 API 작동 방식 및 결과 검증
 
 ---
 
-### 제이든
+### 김지선
 
 > ![제이든 작업 이미지](첨부 이미지 또는 gif 파일 경로)
 
-- **회원별 권한 관리**
-  - 사용자 역할(Role)에 따라 접근 권한 설정 API 구현
-  - 관리자/일반 사용자 페이지용 조건부 라우팅 기능 추가
-- **반응형 레이아웃 API**
-  - 클라이언트 요청에 맞춰 레이아웃 데이터 제공 API 개발
+- **그룹 추천 API 구현**
+  - 그룹 추천이 호출될 떄마다 추천수가 1씩 증가
+  - 그룹 추천 증가, 감소 따로 구현 (추천과 취소)
+- **이미지 업로드 기능 적용**
+  - 이미지 업로드 API를 활용해 필요한 곳에 적용(예: 그룹 등록 시)
 
 ---
 
-### 마크
+### 나영준
 
 > ![마크 작업 이미지](첨부 이미지 또는 gif 파일 경로)
 
-- **수강생 정보 관리 API**
-  - `fetch(GET)`으로 수강생 정보 조회 API 구현
-  - 반응형 UI 데이터 구성
-- **공용 Button API**
-  - 공통 버튼 액션을 처리하는 API 개발
+- **참여자 API 구현**
+  - 참여자가 닉네임과 비밀번호를 입력해 그룹에 참여
+  - 비밀번호 인증을 통해 그룹 참여 취소 가능
+- **그룹 뱃지 기능 구현**
+  - 그룹이 일정 조건을 달성하면 자동으로 뱃지 획득 (참여자 10명, 운동기록 100개, 추천수 100 이상)
+  - 달성한 조건이 미달성으로 변동될 시 뱃지 사라짐
 
 ---
 
-### 데이지
+### 이상휘
 
 > ![데이지 작업 이미지](첨부 이미지 또는 gif 파일 경로)
 
-- **관리자 API**
-  - Path Parameter를 이용한 동적 라우팅 구현
-  - `fetch(PATCH, DELETE)`를 통한 학생 정보 수정 및 탈퇴 처리
-- **CRUD 기능**
-  - 학생 정보 생성·조회·수정·삭제 API 구축
-- **회원관리 슬라이더**
-  - carousel 방식으로 학생 목록 제공 API 구현
+- **전체 프로젝트 관리**
+  - 프로젝트 베이스 구축 (에러 처리 구문 등)
+  - 팀 프로젝트 레포 생성 및 PR 관리, 받은 PR 리뷰
+  - 수정된 PR merge
+  - 중간 발표 자료 준비
+- **운동 기록 API 구현**
+  - 운동 기록 등록, 조회 구현
+  - 타이머를 통해 실제 운동한 만큼의 시간만 입력
 
 ---
 
-### 제이
+### 이지민
 
 > ![제이 작업 이미지](첨부 이미지 또는 gif 파일 경로)
 
-- **학생 시간 정보 관리 API**
-  - 학생별 시간 정보 조회 API 구현
-  - `fetch(GET)`으로 실시간 접속 현황 관리
-- **수정 및 탈퇴 API**
-  - `fetch(PATCH, DELETE)`로 개인정보 수정 및 탈퇴 처리
-- **공용 Modal API**
-  - 공통 Modal 기능 처리 API 개발
+- **랭킹 조회 API 구현**
+  - 운동 기록 많은 순으로 주간, 월간 랭킹 조회
+  - 닉네임, 기록 횟수 누적 시간 조회
+- **전체 코드 및 로직 확인**
+  - 프로젝트 전반적인 코드 및 로직의 흐름 파악, 에러 검증
+
+---
+
+### 정동원
+
+> ![제이 작업 이미지](첨부 이미지 또는 gif 파일 경로)
+
+- **그룹 API 구현**
+  - 그룹 등록, 수정, 삭제, 조회 구현
+  - 수정, 삭제 시에는 비밀번호를 입력받아 확인 후 진행
+- **디스코드 웹훅 기능 추가**
+  - 새로운 운동 기록 등록시 그룹에 등록된 디스코드 웹 서버로 알림 전송
 
 ---
 
 ## 📁 프로젝트 구조
 
-project/
-┣ src/
-┃ ┣ config/
-┃ ┃ ┗ db.ts
-┃ ┣ controllers/
-┃ ┃ ┣ auth.controller.ts
-┃ ┃ ┗ user.controller.ts
-┃ ┣ middleware/
-┃ ┃ ┣ auth.middleware.ts
-┃ ┃ ┗ error.middleware.ts
-┃ ┣ models/
-┃ ┃ ┣ user.model.ts
-┃ ┃ ┗ course.model.ts
-┃ ┣ routes/
-┃ ┃ ┣ auth.routes.ts
-┃ ┃ ┗ user.routes.ts
-┃ ┣ services/
-┃ ┃ ┣ auth.service.ts
-┃ ┃ ┗ user.service.ts
-┃ ┣ utils/
-┃ ┃ ┣ jwt.ts
-┃ ┃ ┣ constants.ts
-┃ ┃ ┗ logger.ts
-┃ ┣ app.ts
-┃ ┗ server.ts
-┣ prisma/
-┃ ┣ schema.prisma
-┃ ┗ seed.ts
-┣ .env
-┣ .gitignore
-┣ package.json
-┣ tsconfig.json
-┗ README.md
+```bash
+NB6-SEVEN-TEAM1
+├── prisma
+│   ├── migrations
+│   ├── schema.prisma
+│   └── seed.js
+├── src
+│   ├── constrollers
+│   │   ├── badge-controller.js
+│   │   ├── group-controller.js
+│   │   ├── group-like-count-controller.js
+│   │   ├── health-controller.js
+│   │   ├── image-controller.js
+│   │   ├── participant-controller.js
+│   │   ├── ranking-controller.js
+│   │   └── record-controller.js
+│   ├── middlewares
+│   │   ├── error-handler.js
+│   │   └── upload.js
+│   ├── routes
+│   │   ├── group-like-count-routes.js
+│   │   ├── group-routes.js
+│   │   ├── health-routes.js
+│   │   ├── image-routes.js
+│   │   ├── participant-routes.js
+│   │   ├── ranking-routes.js
+│   │   └── record-routes.js
+│   ├── utils
+│   │   ├── date-range.js
+│   │   ├── debug.js
+│   │   ├── discord-msg-utils.js
+│   │   ├── image-utils.js
+│   │   └── prisma.js
+│   ├── validators
+│   │   └── record-validatior.js
+│   └── app.js
+├── .env
+├── .gitignore
+├── .prettierrc
+├── .prettierrc.json
+├── package-lock.json
+├── package.json
+└── README.md
+```
 
 ---
 
@@ -157,9 +182,10 @@ project/
 
 ## 🧠 프로젝트 회고록
 
-> 발표자료 및 회고록 링크: (제작한 발표자료 링크 또는 첨부)
+> [중간 발표 자료](https://nb6-t1-middle.netlify.app/)
+> 발표자료 및 회고록 링크: [프로젝트 계획서](https://www.notion.so/2a18b40f38c380e3b0f0c623169fcd37)
 
 ---
 
-📌 **작성일:** 2025-11-03  
+📌 **작성일:** 2025-11-17
 📌 **작성자:** nb6기 Team1
