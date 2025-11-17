@@ -52,13 +52,7 @@ class GroupController {
       //   throw new NotFoundError("group 목록을 찾을 수 없습니다.");
       // }
 
-      // Group Img 경로 제공을 위해 response 값 변환
-      const baseUrl = process.env.BASE_URL || '';
-      const groupsResponse = groups.map((group) => {
-        return { ...group, photoUrl: group.photoUrl ? `${baseUrl}/${group.photoUrl}` : null };
-      });
-
-      res.status(200).json({ message: '목록 생성 완료', data: groupsResponse });
+      res.status(200).json({ message: '목록 생성 완료', data: groups });
     } catch (err) {
       next(err);
     }
@@ -67,51 +61,26 @@ class GroupController {
   //group 데이터 추가
   async createGroup(req, res, next) {
     try {
-      // ==== 이미지 관련 추가 작업 start / 김지선 ====
-      // 1. 이미지 URL 덮어쓰기 방지 및 validation 진행 한 값 분리
-      const { name, goalRep, ownerId, photoUrl, ...body } = req.body;
-
-      // 2. 검증 작업 단순화
-      if (!name) {
+      if (!req.body.name) {
         throw new ValidationError('그룹명은 필수입니다');
       }
 
-      const finalGoalRep = parseInt(goalRep);
-      if (!Number.isInteger(finalGoalRep) || finalGoalRep < 0) {
+      const goalRep = parseInt(req.body.goalRep);
+      if (!Number.isInteger(req.body.goalRep) || goalRep <= 0) {
         throw new ValidationError('목표 횟수는 0 이상의 수여야 합니다.');
       }
 
-      const finalOwnerId = parseInt(ownerId);
-      if (!finalOwnerId) {
-        console.log(finalOwnerId);
+      if (!req.body.ownerId) {
         throw new ValidationError('소유자의 id가 없거나 인식되지 않았습니다.');
       }
 
-      // 3. multer 파일 받아오기
-      const mainImgs = req.files;
-      const finalPhotoUrl =
-        mainImgs && mainImgs.length > 0 ? `uploads/${mainImgs[0].filename}` : null;
-
       const group = await prisma.group.create({
-        data: {
-          ...body,
-          name,
-          goalRep: finalGoalRep,
-          ownerId: finalOwnerId,
-          photoUrl: finalPhotoUrl,
-        },
+        data: req.body,
       });
-      // ==== 이미지 관련 추가 작업 End ====
 
       debugLog('group 생성 완료', group);
 
-      const baseUrl = process.env.BASE_URL || '';
-      const groupResponse = {
-        ...group,
-        photoUrl: group.photoUrl ? `${baseUrl}/${group.photoUrl}` : null,
-      };
-
-      res.status(201).json({ message: 'group 생성 완료', data: groupResponse });
+      res.status(201).json({ message: 'group 생성 완료', data: group });
     } catch (err) {
       debugError('group 생성 실패', err);
 
@@ -138,14 +107,7 @@ class GroupController {
         throw new NotFoundError('group ID가 존재하지 않습니다.');
       }
 
-      // Group Img 경로 제공을 위해 response 값 변환
-      const baseUrl = process.env.BASE_URL || '';
-      const groupResponse = {
-        ...group,
-        photoUrl: group.photoUrl ? `${baseUrl}/${group.photoUrl}` : null,
-      };
-
-      res.status(200).json({ message: 'group 상세 조회 완료', data: groupResponse });
+      res.status(200).json({ message: 'group 상세 조회 완료', data: group });
     } catch (err) {
       debugError('group 호출 실패', err);
       next(err);
@@ -198,7 +160,6 @@ class GroupController {
     try {
       const { id } = req.params;
       const { pw, ...updateData } = req.body;
-      let dataToUpdate = { ...updateData };
 
       const findGroup = await prisma.group.findUnique({
         where: { id: Number(id) },
@@ -226,37 +187,21 @@ class GroupController {
         throw new UnauthorizedError('group owner의 비밀번호가 틀렸습니다.');
       }
 
-      if (!updateData.name) {
+      if (!req.body.name) {
         throw new ValidationError('그룹명은 필수입니다');
       }
 
-      console.log(updateData.goalRep);
-
-      dataToUpdate.goalRep = parseInt(updateData.goalRep);
-      if (!Number.isInteger(dataToUpdate.goalRep) || dataToUpdate.goalRep < 0) {
+      const goalRep = parseInt(req.body.goalRep);
+      if (!Number.isInteger(req.body.goalRep) || goalRep < 0) {
         throw new ValidationError('목표 횟수는 0 이상의 수여야 합니다.');
-      }
-
-      // 미들웨어를 사용하여 이미지 파일 받아오기
-      const mainImgs = req.files;
-
-      if (mainImgs && mainImgs.length > 0) {
-        dataToUpdate.photoUrl = `uploads/${mainImgs[0].filename}`;
       }
 
       const group = await prisma.group.update({
         where: { id: Number(id) },
-        data: dataToUpdate,
+        data: updateData,
       });
 
-      // Group Img 경로 제공을 위해 response 값 변환
-      const baseUrl = process.env.BASE_URL || '';
-      const groupResponse = {
-        ...group,
-        photoUrl: group.photoUrl ? `${baseUrl}/${group.photoUrl}` : null,
-      };
-
-      res.status(200).json({ message: 'group 수정 완료', data: groupResponse });
+      res.status(200).json({ message: 'group 수정 완료', data: group });
     } catch (err) {
       next(err);
     }
