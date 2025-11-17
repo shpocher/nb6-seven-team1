@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>이미지 업로드 테스트</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        border-bottom: 3px solid #4caf50;
+        padding-bottom: 10px;
+      }
+      .upload-section {
+        margin: 20px 0;
+        padding: 20px;
+        border: 2px dashed #ddd;
+        border-radius: 5px;
+        background-color: #fafafa;
+      }
+      input[type='file'] {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+      .error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+      .info {
+        background-color: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+      }
+      .image-preview {
+        margin-top: 20px;
+      }
+      .image-preview img {
+        max-width: 200px;
+        margin: 10px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+        border: 1px solid #ddd;
+      }
+      .file-info {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🖼️ 이미지 업로드 테스트</h1>
+
+      <div class="upload-section">
+        <h3>파일 선택</h3>
+        <p style="color: #666; font-size: 14px">
+          ✅ 지원 형식: JPG, JPEG, PNG<br />
+          ✅ 최대 크기: 5MB<br />
+          ✅ 최대 개수: 10개
+        </p>
+        <input type="file" id="imageInput" accept=".jpg,.jpeg,.png" multiple />
+        <div id="fileInfo" class="file-info" style="display: none"></div>
+        <button id="uploadBtn" onclick="uploadImages()">업로드</button>
+        <button onclick="clearResults()" style="background-color: #f44336; margin-left: 10px">
+          초기화
+        </button>
+      </div>
+
+      <div id="result"></div>
+      <div id="imagePreview" class="image-preview"></div>
+    </div>
+
+    <script>
+      const API_BASE_URL = 'http://localhost:3000';
+
+      // 파일 선택 시 정보 표시
+      document.getElementById('imageInput').addEventListener('change', function (e) {
+        const files = e.target.files;
+        const fileInfo = document.getElementById('fileInfo');
+
+        if (files.length > 0) {
+          let infoText = `선택된 파일: ${files.length}개\n`;
+          for (let i = 0; i < files.length; i++) {
+            const sizeMB = (files[i].size / (1024 * 1024)).toFixed(2);
+            infoText += `\n${i + 1}. ${files[i].name} (${sizeMB} MB)`;
+          }
+          fileInfo.textContent = infoText;
+          fileInfo.style.display = 'block';
+        } else {
+          fileInfo.style.display = 'none';
+        }
+      });
+
+      async function uploadImages() {
+        const fileInput = document.getElementById('imageInput');
+        const resultDiv = document.getElementById('result');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const previewDiv = document.getElementById('imagePreview');
+
+        // 파일 선택 확인
+        if (!fileInput.files || fileInput.files.length === 0) {
+          resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>⚠️ 에러:</strong> 파일을 선택해주세요.
+                    </div>
+                `;
+          return;
+        }
+
+        // FormData 생성
+        const formData = new FormData();
+        for (let i = 0; i < fileInput.files.length; i++) {
+          formData.append('images', fileInput.files[i]);
+        }
+
+        // 업로드 시작
+        uploadBtn.disabled = true;
+        resultDiv.innerHTML = `
+                <div class="result info">
+                    <strong>⏳ 업로드 중...</strong> ${fileInput.files.length}개 파일 전송 중
+                </div>
+            `;
+        previewDiv.innerHTML = '';
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/images`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // 성공
+            resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h3>✅ 업로드 성공!</h3>
+                            <p>${data.urls.length}개의 이미지가 업로드되었습니다.</p>
+                            <h4>서버 응답:</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+
+            // 이미지 미리보기
+            previewDiv.innerHTML = '<h3>업로드된 이미지:</h3>';
+            data.urls.forEach((url, index) => {
+              const img = document.createElement('img');
+              img.src = url;
+              img.alt = `Uploaded image ${index + 1}`;
+              img.onerror = function () {
+                this.style.display = 'none';
+                const error = document.createElement('p');
+                error.textContent = `이미지 ${index + 1} 로드 실패: ${url}`;
+                error.style.color = 'red';
+                previewDiv.appendChild(error);
+              };
+              previewDiv.appendChild(img);
+            });
+          } else {
+            // 실패
+            resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h3>❌ 업로드 실패</h3>
+                            <p><strong>상태 코드:</strong> ${response.status}</p>
+                            <p><strong>에러 메시지:</strong> ${
+                              data.message || '알 수 없는 오류'
+                            }</p>
+                            <h4>서버 응답:</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ 네트워크 에러</h3>
+                        <p><strong>에러:</strong> ${error.message}</p>
+                        <p>서버가 실행 중인지 확인해주세요: <code>npm run dev</code></p>
+                        <p>API URL: <code>${API_BASE_URL}/images</code></p>
+                    </div>
+                `;
+        } finally {
+          uploadBtn.disabled = false;
+        }
+      }
+
+      function clearResults() {
+        document.getElementById('imageInput').value = '';
+        document.getElementById('result').innerHTML = '';
+        document.getElementById('imagePreview').innerHTML = '';
+        document.getElementById('fileInfo').style.display = 'none';
+      }
+    </script>
+  </body>
+</html>
