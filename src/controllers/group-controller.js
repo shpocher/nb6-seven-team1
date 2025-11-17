@@ -92,7 +92,7 @@ class GroupController {
       const finalPhotoUrl =
         mainImgs && mainImgs.length > 0 ? `uploads/${mainImgs[0].filename}` : null;
 
-      // 3. Owner(Participant) 생성 후 Group 생성
+      // 3. Owner(Participant) 생성과 함께 Group 생성
       const group = await prisma.group.create({
         data: {
           ...body,
