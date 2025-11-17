@@ -52,7 +52,13 @@ class GroupController {
       //   throw new NotFoundError("group 목록을 찾을 수 없습니다.");
       // }
 
-      res.status(200).json({ message: '목록 생성 완료', data: groups });
+      // Group Img 경로 제공을 위해 response 값 변환
+      const baseUrl = process.env.BASE_URL || '';
+      const groupsResponse = groups.map((group) => {
+        return { ...group, photoUrl: group.photoUrl ? `${baseUrl}/${group.photoUrl}` : null };
+      });
+
+      res.status(200).json({ message: '목록 생성 완료', data: groupsResponse });
     } catch (err) {
       next(err);
     }
@@ -132,7 +138,14 @@ class GroupController {
         throw new NotFoundError('group ID가 존재하지 않습니다.');
       }
 
-      res.status(200).json({ message: 'group 상세 조회 완료', data: group });
+      // Group Img 경로 제공을 위해 response 값 변환
+      const baseUrl = process.env.BASE_URL || '';
+      const groupResponse = {
+        ...group,
+        photoUrl: group.photoUrl ? `${baseUrl}/${group.photoUrl}` : null,
+      };
+
+      res.status(200).json({ message: 'group 상세 조회 완료', data: groupResponse });
     } catch (err) {
       debugError('group 호출 실패', err);
       next(err);
