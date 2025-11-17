@@ -1,0 +1,39 @@
+.container {
+  width: 100%;
+  position: relative;
+}
+
+.listHeader {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  z-index: 1;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.search {
+  height: 100%;
+}
+
+.orderBy {
+  width: 140px;
+  height: 100%;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px 24px;
+  list-style: none;
+}

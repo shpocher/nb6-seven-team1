@@ -1,0 +1,112 @@
+.container {
+  display: flex;
+  align-items: center;
+  background-color: var(--black-400);
+  color: var(--gray-50);
+  padding: 32px;
+  gap: 24px;
+  border-radius: 16px;
+  position: relative;
+}
+
+.badges {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  display: flex;
+  gap: 8px;
+}
+
+.thumbnail {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+}
+
+.tags > .tag {
+  flex-shrink: 0;
+}
+
+div.participants {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.container .info {
+  flex-grow: 1;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupName {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.description {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.goalReps {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.buttons > .button {
+  flex-shrink: 0;
+}
+
+.discordButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #5865f2;
+  color: var(--gray-50);
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.discordButton:active,
+.discordButton:hover {
+  background-color: #404eed;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.actions > .action {
+  flex-shrink: 0;
+}
+
+.action {
+  min-width: 120px;
+  padding: 12px 28px;
+  font-size: 18px;
+  line-height: 26px;
+}
+
+div.settingButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 0;
+}

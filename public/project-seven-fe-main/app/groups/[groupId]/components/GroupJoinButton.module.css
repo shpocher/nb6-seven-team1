@@ -1,0 +1,17 @@
+.groupJoinButton {
+  width: 120px;
+  padding: 12px 28px;
+  font-size: 18px;
+  line-height: 26px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form .input,
+.form .button {
+  width: 100%;
+}

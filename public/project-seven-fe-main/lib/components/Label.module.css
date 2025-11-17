@@ -1,0 +1,16 @@
+.label {
+  display: block;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--black-100);
+}
+
+.label ~ input,
+.label ~ textarea {
+  margin-top: 4px;
+}
+
+.label.error {
+  color: var(--red-400);
+}

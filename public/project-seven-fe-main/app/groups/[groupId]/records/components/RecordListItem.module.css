@@ -1,0 +1,89 @@
+.recordItem {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.imageContainer {
+  position: relative;
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 17 / 10;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.prevButton,
+.nextButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.prevButton {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+}
+
+.nextButton {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+}
+
+.prevArrowIcon {
+  transform: rotate(180deg);
+}
+
+.content {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.distance {
+  width: 100%;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.description {
+  width: 100%;
+  font-size: 16px;
+  color: var(--black-100);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.info {
+  font-size: 16px;
+  color: var(--black-100);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.author {
+  border-radius: 8px;
+  background-color: var(--gray-100);
+  color: var(--black-100);
+  padding: 4px 8px;
+}

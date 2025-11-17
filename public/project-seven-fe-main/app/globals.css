@@ -1,0 +1,31 @@
+:root {
+  --black-500: #040404;
+  --black-400: #1f1f1f;
+  --black-300: #373737;
+  --black-200: #525252;
+  --black-100: #6b6b6b;
+  --gray-500: #999;
+  --gray-400: #ababab;
+  --gray-300: #c4c4c4;
+  --gray-200: #e0e0e0;
+  --gray-100: #e9e9e9;
+  --gray-50: #fff;
+
+  --green-700: #00826a;
+  --green-100: #cdfeeb;
+  --green-50: #eafff7;
+
+  --red-400: #d01a29;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  min-width: 1024px;
+}

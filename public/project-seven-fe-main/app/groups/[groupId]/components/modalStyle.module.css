@@ -1,0 +1,17 @@
+div .modal {
+  min-width: 418px;
+  padding: 32px 40px;
+}
+
+.title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.description {
+  text-align: center;
+  font-size: 14px;
+  line-height: 24px;
+  margin-bottom: 16px;
+}

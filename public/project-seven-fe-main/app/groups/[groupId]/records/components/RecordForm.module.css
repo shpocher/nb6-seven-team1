@@ -1,0 +1,32 @@
+div.container {
+ padding: 40px; 
+}
+
+.heading {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px 24px;
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+}
+
+.photos {
+  grid-row: span 2;
+}
+
+.photosInput {
+  height: 100%;
+}
+
+.submit {
+  max-width: 218px;
+}
