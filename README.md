@@ -164,16 +164,19 @@ NB6-SEVEN-TEAM1
 
 ## 🌐 구현 홈페이지
 
-[https://www.codeit.kr/](https://www.codeit.kr/)
+[RENDER](https://seven-service-d0s5.onrender.com/)
 
 ---
 
 ## 🧠 프로젝트 회고록
 
 > [중간 발표 자료](https://nb6-t1-middle.netlify.app/)
-> 발표자료 및 회고록 링크: [프로젝트 계획서](https://www.notion.so/2a18b40f38c380e3b0f0c623169fcd37)
+
+> [최종 발표 자료](https://file.notion.so/f/f/a29b669d-e680-438e-b18c-08888fc54a21/d79095fa-564e-45f1-b289-41e69c5eeebe/1%E1%84%90%E1%85%B5%E1%86%B7_SEVEN_%E1%84%87%E1%85%A1%E1%86%AF%E1%84%91%E1%85%AD%E1%84%8C%E1%85%A1%E1%84%85%E1%85%AD.pdf?table=block&id=2886fd22-8e8d-816d-98f4-d43bfd24c62d&spaceId=a29b669d-e680-438e-b18c-08888fc54a21&expirationTimestamp=1763474400000&signature=npYfvrsHv3aqalNgN15bftymiJK1VmwX4Y-Y4Sjk5rM&downloadName=1%E1%84%90%E1%85%B5%E1%86%B7_SEVEN_%E1%84%87%E1%85%A1%E1%86%AF%E1%84%91%E1%85%AD%E1%84%8C%E1%85%A1%E1%84%85%E1%85%AD.pdf)
+
+> [프로젝트 계획서](https://www.notion.so/2a18b40f38c380e3b0f0c623169fcd37)
 
 ---
 
-📌 **작성일:** 2025-11-17
+📌 **작성일:** 2025-11-18
 📌 **작성자:** nb6기 Team1
