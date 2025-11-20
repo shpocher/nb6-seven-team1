@@ -1,0 +1,316 @@
+### ==========================================
+### SEVEN 프로젝트 - Record API 테스트
+### ==========================================
+
+@baseUrl = http://localhost:3000
+
+### ==========================================
+### ✅ 1. 헬스 체크
+### ==========================================
+GET {{baseUrl}}/health
+
+### 예상 응답: 200 OK
+### { "status": "OK" }
+
+### ==========================================
+### ✅ 2. 운동 기록 생성 - Group 1 (러닝 팀)
+### ==========================================
+POST {{baseUrl}}/groups/1/records
+Content-Type: application/json
+
+{
+  "exerciseType": "run",
+  "description": "오늘 아침 10km 달렸어요!",
+  "time": 3600,
+  "distance": 10.0,
+  "photos": [],
+  "authorNickname": "[샘플] 러닝고수",
+  "authorPassword": "1234"
+}
+
+### ==========================================
+### ✅ 3. 운동 기록 생성 - description 없이 (선택사항)
+### ==========================================
+POST {{baseUrl}}/groups/1/records
+Content-Type: application/json
+
+{
+  "exerciseType": "run",
+  "time": 1800,
+  "distance": 5.0,
+  "photos": [],
+  "authorNickname": "[샘플] 초보러너",
+  "authorPassword": "1234"
+}
+
+### ==========================================
+### ✅ 4. 운동 기록 생성 - Group 2 (자전거)
+### ==========================================
+POST {{baseUrl}}/groups/2/records
+Content-Type: application/json
+
+{
+  "exerciseType": "bike",
+  "description": "한강 라이딩 완료!",
+  "time": 5400,
+  "distance": 30.0,
+  "photos": [],
+  "authorNickname": "[샘플] 바이크마스터",
+  "authorPassword": "1234"
+}
+
+### ==========================================
+### ✅ 5. 운동 기록 생성 - Group 3 (수영)
+### ==========================================
+POST {{baseUrl}}/groups/3/records
+Content-Type: application/json
+
+{
+  "exerciseType": "swim",
+  "description": "자유형 연습",
+  "time": 2400,
+  "distance": 1.2,
+  "photos": [],
+  "authorNickname": "[샘플] 수영선생",
+  "authorPassword": "1234"
+}
+
+### ==========================================
+### ✅ 6. 운동 기록 목록 조회 - Group 1 (기본 - 노션 API 기준)
+### ==========================================
+GET {{baseUrl}}/groups/1/records
+
+
+### ==========================================
+### ✅ 7. 운동 기록 목록 조회 - 페이지네이션 포함
+###   - page 또는 limit 파라미터가 있으면 pagination 포함
+### ==========================================
+GET {{baseUrl}}/groups/1/records?page=1&limit=5
+
+
+### ==========================================
+### ✅ 8. 운동 기록 목록 조회 - 정렬 (시간 오름차순)
+###   - 정렬만 있으면 pagination 없음 (명세서 준수)
+### ==========================================
+GET {{baseUrl}}/groups/1/records?orderBy=time&order=asc
+
+
+### ==========================================
+### ✅ 9. 운동 기록 목록 조회 - 검색 (닉네임)
+###   - 검색만 있으면 pagination 없음 (명세서 준수)
+### ==========================================
+GET {{baseUrl}}/groups/1/records?search=러닝고수
+
+### ==========================================
+### ✅ 10. 운동 기록 목록 조회 - Group 4 (페이지네이션)
+### ==========================================
+GET {{baseUrl}}/groups/4/records?page=1&limit=20
+
+
+### ==========================================
+### ✅ 11. 운동 기록 상세 조회
+### ==========================================
+GET {{baseUrl}}/groups/1/records/1
+
+### ==========================================
+### ❌ 12. 에러 테스트 - 존재하지 않는 닉네임
+### ==========================================
+POST {{baseUrl}}/groups/1/records
+Content-Type: application/json
+
+{
+  "exerciseType": "run",
+  "time": 1800,
+  "distance": 5.0,
+  "photos": [],
+  "authorNickname": "존재하지않는닉네임",
+  "authorPassword": "1234"
+}
+
+### 예상 응답: 401 Unauthorized
+### {
+###   "message": "닉네임을 찾을 수 없습니다",
+###   "error": "UNAUTHORIZED",
+###   "path": "authorNickname"
+### }
+
+### ==========================================
+### ❌ 13. 에러 테스트 - 잘못된 비밀번호
+### ==========================================
+POST {{baseUrl}}/groups/1/records
+Content-Type: application/json
+
+{
+  "exerciseType": "run",
+  "time": 1800,
+  "distance": 5.0,
+  "photos": [],
+  "authorNickname": "[샘플] 러닝고수",
+  "authorPassword": "wrongpassword"
+}
+
+### 예상 응답: 401 Unauthorized
+### {
+###   "message": "비밀번호가 일치하지 않습니다",
+###   "error": "UNAUTHORIZED",
+###   "path": "authorPassword"
+### }
+
+### ==========================================
+### ❌ 14. 에러 테스트 - 필수 필드 누락
+### ==========================================
+POST {{baseUrl}}/groups/1/records
+Content-Type: application/json
+
+{
+  "description": "테스트"
+}
+
+### 예상 응답: 400 Bad Request
+### {
+###   "path": "exerciseType",
+###   "message": "운동 종류는 필수입니다"
+### }
+
+### ==========================================
+### ❌ 15. 에러 테스트 - 잘못된 exerciseType
+### ==========================================
+POST {{baseUrl}}/groups/1/records
+Content-Type: application/json
+
+{
+  "exerciseType": "hiking",
+  "time": 1800,
+  "distance": 5.0,
+  "photos": [],
+  "authorNickname": "[샘플] 러닝고수",
+  "authorPassword": "1234"
+}
+
+### 예상 응답: 400 Bad Request
+### {
+###   "path": "exerciseType",
+###   "message": "운동 종류는 달리기, 자전거, 수영 중 하나여야 합니다"
+### }
+
+### ==========================================
+### ❌ 16. 에러 테스트 - 존재하지 않는 그룹
+### ==========================================
+POST {{baseUrl}}/groups/999/records
+Content-Type: application/json
+
+{
+  "exerciseType": "run",
+  "time": 1800,
+  "distance": 5.0,
+  "photos": [],
+  "authorNickname": "[샘플] 러닝고수",
+  "authorPassword": "1234"
+}
+
+### 예상 응답: 401 Unauthorized
+### (groupId=999에 참여자가 없음)
+
+### ==========================================
+### ❌ 17. 에러 테스트 - 존재하지 않는 기록 조회
+### ==========================================
+GET {{baseUrl}}/groups/1/records/9999
+
+### 예상 응답: 404 Not Found
+### {
+###   "message": "운동 기록을 찾을 수 없습니다",
+###   "error": "NOT_FOUND"
+### }
+
+### ==========================================
+### ✅ 18. 복합 쿼리 테스트 (페이지네이션 + 정렬 + 검색)
+### ==========================================
+GET {{baseUrl}}/groups/4/records?page=2&limit=10&orderBy=time&order=desc&search=혼자
+
+### 예상 응답: 200 OK
+### {
+###   "data": [...],  // 검색된 결과의 2페이지 (11-20번째)
+###   "total": 15,
+###   "pagination": {
+###     "page": 2,
+###     "limit": 10,
+###     "totalPages": 2
+###   }
+### }
+### 
+### ✅ page가 있어서 pagination 포함
+
+### ==========================================
+### 📊 19. 그룹별 운동 기록 통계 확인
+### ==========================================
+
+### Group 1 - 러닝 팀 (약 26개 기록 예상)
+GET {{baseUrl}}/groups/1/records
+
+### Group 2 - 자전거 팀 (약 16개 기록 예상)
+GET {{baseUrl}}/groups/2/records
+
+### Group 3 - 수영 팀 (약 9개 기록 예상)
+GET {{baseUrl}}/groups/3/records
+
+### Group 4 - 혼자 운동 (약 113개 기록 예상)
+GET {{baseUrl}}/groups/4/records
+
+### Group 5 - 빈 그룹 (0개 기록)
+GET {{baseUrl}}/groups/5/records
+
+### ==========================================
+### 🎯 20. 페이지네이션 유무 비교 테스트
+### ==========================================
+
+### A) 페이지네이션 없음 (API 명세서 기준)
+GET {{baseUrl}}/groups/1/records
+
+
+### B) 페이지네이션 있음 (실용성)
+GET {{baseUrl}}/groups/1/records?page=1&limit=10
+
+### 예상: { "data": [...], "total": 26, "pagination": {...} }
+
+### C) limit만 있어도 pagination 포함
+GET {{baseUrl}}/groups/1/records?limit=5
+
+### 예상: { "data": [...], "total": 26, "pagination": {...} }
+
+### D) page만 있어도 pagination 포함
+GET {{baseUrl}}/groups/1/records?page=2
+
+### 예상: { "data": [...], "total": 26, "pagination": {...} }
+
+### E) 정렬만 있으면 pagination 없음
+GET {{baseUrl}}/groups/1/records?orderBy=time&order=asc
+
+### 예상: { "data": [...], "total": 26 }
+
+### F) 페이지네이션 + 정렬
+GET {{baseUrl}}/groups/1/records?page=1&limit=5&orderBy=time&order=asc
+
+### 예상: { "data": [...], "total": 26, "pagination": {...} }
+
+
+### ==========================================
+### >>> 테스트 결과 요약
+### ==========================================
+### 
+### ✅ 성공 케이스:
+### - 운동 기록 생성 (description 포함/미포함)
+### - 운동 기록 목록 조회
+###   * 기본: pagination 없음 (노션 api 명세서 준수)
+###   * page/limit 포함: pagination 있음 (확장 고려)
+### - 운동 기록 상세 조회
+### - 정렬, 검색 기능
+###
+### ❌ 에러 케이스:
+### - 존재하지 않는 닉네임
+### - 잘못된 비밀번호
+### - 필수 필드 누락
+### - 잘못된 exerciseType
+### - 존재하지 않는 그룹
+### - 존재하지 않는 기록
+###
+### ==========================================

@@ -1,0 +1,96 @@
+// SEVEN 프로젝트 - 수정된 Prisma 스키마
+// 제약 완화 버전
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Group (그룹)
+// ============================================
+model Group {
+  id                 Int           @id @default(autoincrement())
+  name               String
+  description        String?
+  photoUrl           String?       @map("photo_url")
+  goalRep            Int           @default(100) @map("goal_rep") // 기본값 설정
+  tags               String[]      @default([]) // 기본값 설정
+  discordWebhookUrl  String?       @map("discord_webhook_url")
+  discordInviteUrl   String?       @map("discord_invite_url")
+  likeCount          Int           @default(0) @map("like_count")
+  badges             String[]      @default([]) 
+  
+  // 관계
+  ownerId            Int?          @map("owner_id")  // nullable로 변경
+  owner              Participant?  @relation("GroupOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  participants       Participant[] @relation("GroupParticipants")
+  records            Record[]
+
+  // 타임스탬프
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  @@map("groups")
+}
+
+// ============================================
+// Participant (참여자)
+// ============================================
+model Participant {
+  id        Int      @id @default(autoincrement())
+  nickname  String
+  password  String
+  groupId   Int      @map("group_id")
+  
+  // 관계
+  group         Group    @relation("GroupParticipants", fields: [groupId], references: [id], onDelete: Cascade)
+  ownedGroups   Group[]  @relation("GroupOwner")
+  records       Record[]
+  
+  // 타임스탬프
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // 제약 완화: unique 제거 (같은 그룹 내 닉네임 중복 허용)
+  // @@unique([groupId, nickname], name: "unique_nickname_per_group")
+
+  @@map("participants")
+}
+
+// ============================================
+// Record (운동 기록)
+// ============================================
+model Record {
+  id           Int      @id @default(autoincrement())
+  exerciseType ExerciseType   @map("exercise_type")
+  description  String?
+  time         Int      
+  distance     Float   
+  photos       String[] @default([])
+  
+  // 관계
+  groupId   Int         @map("group_id")
+  group     Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  authorId  Int?        @map("author_id")  // nullable로 변경
+  author    Participant? @relation(fields: [authorId], references: [id], onDelete: SetNull) // Cascade → SetNull
+  
+  // 타임스탬프
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@map("records")
+}
+
+// ============================================
+// Enum
+// ============================================
+enum ExerciseType {
+  run   // 달리기
+  bike  // 자전거
+  swim  // 수영
+}

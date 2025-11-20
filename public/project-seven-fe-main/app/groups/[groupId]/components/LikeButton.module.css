@@ -1,0 +1,12 @@
+.likeButton {
+  border: 1px solid var(--gray-50);
+  color: var(--gray-50);
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 700;
+}

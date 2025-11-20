@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  height: 42px;
+}
+
+.total {
+  align-self: center;
+}

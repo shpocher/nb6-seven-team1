@@ -1,0 +1,409 @@
+{
+  "info": {
+    "name": "SEVEN API (명세서 기준)",
+    "description": "NB6-Team1 SEVEN API Postman collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const request = pm.request || {};",
+          "const body = request.body;",
+          "if (!body || body.mode !== 'raw' || !body.raw) {",
+          "  return;",
+          "}",
+          "const requestUrl = request.url || '';",
+          "let urlPath = '';",
+          "if (requestUrl) {",
+          "  if (Array.isArray(requestUrl.path)) {",
+          "    urlPath = '/' + requestUrl.path.join('/');",
+          "  } else if (typeof requestUrl === 'string') {",
+          "    urlPath = requestUrl;",
+          "  } else if (typeof requestUrl.toString === 'function') {",
+          "    urlPath = requestUrl.toString();",
+          "  }",
+          "}",
+          "const matchers = [",
+          "  {",
+          "    test: (path) => path.includes('/records'),",
+          "    nullable: ['description'],",
+          "    arrays: ['photos'],",
+          "    forceNull: ['authorNickname','authorPassword']",
+          "  },",
+          "  {",
+          "    test: (path) => path.includes('/participants'),",
+          "    arrays: [],",
+          "    nullable: [],",
+          "    forceNull: ['nickname','password']",
+          "  },",
+          "  {",
+          "    test: (path) => path.includes('/groups'),",
+          "    nullable: ['description','photoUrl','discordWebhookUrl','discordInviteUrl'],",
+          "    arrays: ['tags'],",
+          "    forceNull: ['name','ownerNickname','ownerPassword']",
+          "  }",
+          "];",
+          "const matched = matchers.find((m) => m.test(urlPath));",
+          "if (!matched) {",
+          "  return;",
+          "}",
+          "const nullableKeys = new Set(matched.nullable || []);",
+          "const arraySanitizeKeys = new Set(matched.arrays || []);",
+          "const forceNullKeys = new Set(matched.forceNull || []);",
+          "const placeholderPattern = /^\\s*\\{\\{.*\\}\\}\\s*$/;",
+          "function shouldTreatAsNull(value) {",
+          "  if (value === null || value === undefined) {",
+          "    return true;",
+          "  }",
+          "  if (typeof value !== 'string') {",
+          "    return false;",
+          "  }",
+          "  const trimmed = value.trim();",
+          "  if (!trimmed) {",
+          "    return true;",
+          "  }",
+          "  if (trimmed.toLowerCase() === 'null') {",
+          "    return true;",
+          "  }",
+          "  return placeholderPattern.test(trimmed);",
+          "}",
+          "const placeholderInQuotes = /\"\\s*\\{\\{[^}]+\\}\\}\\s*\"/g;",
+          "const placeholderBare = /\\{\\{[^}]+\\}\\}/g;",
+          "let resolved = pm.variables.replaceIn(body.raw);",
+          "resolved = resolved.replace(placeholderInQuotes, 'null');",
+          "resolved = resolved.replace(placeholderBare, 'null');",
+          "function coerce(value, key) {",
+          "  if (Array.isArray(value)) {",
+          "    const mapped = value.map((item) => {",
+          "      if (item && typeof item === 'object') {",
+          "        return coerce(item, null);",
+          "      }",
+          "      return coerce(item, key);",
+          "    });",
+          "    if (key && arraySanitizeKeys.has(key)) {",
+          "      const cleaned = mapped.filter((item) => {",
+          "        if (item === null || item === undefined) {",
+          "          return false;",
+          "        }",
+          "        if (typeof item === 'string' && shouldTreatAsNull(item)) {",
+          "          return false;",
+          "        }",
+          "        return true;",
+          "      });",
+          "      return cleaned.length ? cleaned : [];",
+          "    }",
+          "    return mapped;",
+          "  }",
+          "  if (value && typeof value === 'object') {",
+          "    const next = {};",
+          "    Object.entries(value).forEach(([childKey, childValue]) => {",
+          "      next[childKey] = coerce(childValue, childKey);",
+          "    });",
+          "    return next;",
+          "  }",
+          "  if (key && (nullableKeys.has(key) || forceNullKeys.has(key)) && shouldTreatAsNull(value)) {",
+          "    return null;",
+          "  }",
+          "  return value;",
+          "}",
+          "try {",
+          "  const parsed = JSON.parse(resolved);",
+          "  const coerced = coerce(parsed, null);",
+          "  body.update(JSON.stringify(coerced));",
+          "} catch (err) {",
+          "  console.warn('Nullable coercion skipped:', err);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        },
+        {
+          "name": "GET /health/db",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health/db"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {
+          "name": "POST /images (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "최대 10장, jpg/png만"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/images"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Groups",
+      "item": [
+        {
+          "name": "POST /groups (create)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{그룹명}}\",\n  \"description\": \"{{설명}}\",\n  \"photoUrl\": \"{{사진url}}\",\n  \"goalRep\": {{목표 횟수(숫자)}},\n  \"discordWebhookUrl\": \"{{웹훅url(없으면 null)}}\",\n  \"discordInviteUrl\": \"{{초대url(없으면 null)}}\",\n  \"tags\": [\"{{태그 추가}}\"],\n  \"ownerNickname\": \"{{소유자 닉네임}}\",\n  \"ownerPassword\": \"{{소유자 비밀번호}}\"\n}"
+            },
+            "url": "{{baseUrl}}/groups"
+          }
+        },
+        {
+          "name": "GET /groups (list)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/groups?page=1&limit=10&order=desc&orderBy=createdAt&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["groups"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                },
+                {
+                  "key": "orderBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /groups/:groupId (detail)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/groups/{{groupId}}"
+          }
+        },
+        {
+          "name": "PATCH /groups/:groupId (update)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{그룹명}}\",\n  \"description\": \"{{설명}}\",\n  \"photoUrl\": \"{{사진url}}\",\n  \"goalRep\": {{목표 횟수(숫자)}},\n  \"discordWebhookUrl\": {{웹훅url(없으면 null)}},\n  \"discordInviteUrl\": {{초대url(없으면 null)}},\n  \"tags\": [\"{{태그 추가}}\"],\n  \"ownerNickname\": \"{{소유자 닉네임}}\",\n  \"ownerPassword\": \"{{소유자 비밀번호}}\"\n}"
+            },
+            "url": "{{baseUrl}}/groups/{{groupId}}"
+          }
+        },
+        {
+          "name": "DELETE /groups/:groupId (delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ownerPassword\": \"{{소유자 비밀번호}}\"\n}"
+            },
+            "url": "{{baseUrl}}/groups/{{groupId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Participants",
+      "item": [
+        {
+          "name": "POST /groups/:groupId/participants (join)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nickname\": \"{{참여자 닉네임}}\",\n  \"password\": \"{{참여자 비밀번호}}\"\n}"
+            },
+            "url": "{{baseUrl}}/groups/{{groupId}}/participants"
+          }
+        },
+        {
+          "name": "DELETE /groups/:groupId/participants (leave)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nickname\": \"{{참여자 닉네임}}\",\n  \"password\": \"{{참여자 비밀번호}}\"\n}"
+            },
+            "url": "{{baseUrl}}/groups/{{groupId}}/participants"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ranking",
+      "item": [
+        {
+          "name": "GET /groups/:groupId/rank?duration=weekly",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/groups/{{groupId}}/rank?duration=weekly"
+          }
+        },
+        {
+          "name": "GET /groups/:groupId/rank?duration=monthly",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/groups/{{groupId}}/rank?duration=monthly"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Records",
+      "item": [
+        {
+          "name": "POST /groups/:groupId/records (create)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exerciseType\": \"{{종류(run/bike/swim)}}\",\n  \"description\": \"{{설명}}\",\n  \"time\": {{운동시간(sec,숫자)}},\n  \"distance\": {{거리(km,숫자)}},\n  \"photos\": [\"{{사진urls}}\"],\n  \"authorNickname\": \"{{작성자 닉네임}}\",\n  \"authorPassword\": \"{{작성자 비밀번호}}\"\n}"
+            },
+            "url": "{{baseUrl}}/groups/{{groupId}}/records"
+          }
+        },
+        {
+          "name": "GET /groups/:groupId/records (list)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/groups/{{groupId}}/records?page=1&limit=10&order=desc&orderBy=createdAt&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["groups", "{{groupId}}", "records"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                },
+                {
+                  "key": "orderBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /groups/:groupId/records/:recordId (detail)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/groups/{{groupId}}/records/{{recordId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GroupLikes",
+      "item": [
+        {
+          "name": "POST /groups/:groupId/likes (like up)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/groups/{{groupId}}/likes"
+          }
+        },
+        {
+          "name": "DELETE /groups/:groupId/likes (like cancel)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/groups/{{groupId}}/likes"
+          }
+        }
+      ]
+    }
+  ]
+}

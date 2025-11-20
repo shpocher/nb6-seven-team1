@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+  margin: 54px 0 28px;
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+}
+
+
+.tab {
+  min-width: 66px;
+  text-align: center;
+  padding: 4px 0 12px;
+  text-decoration: none;
+  color: var(--black-500);
+  border-bottom: 2px solid transparent;
+  transition: border-bottom 0.3s ease;
+}
+
+.tab:hover,
+.tab.active {
+  font-weight: 700;
+  border-bottom: 2px solid #000;
+}
